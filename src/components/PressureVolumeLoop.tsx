@@ -21,7 +21,8 @@ const PressureVolumeLoop: React.FC = () => {
       },
       y: {
         type: 'linear', // sets the y-axis to linear
-        display: false, // hides the y-axis line
+        display: false, // hides the y-axis line,
+        reverse: true,
       },
     },
     elements: {
