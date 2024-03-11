@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -8,7 +8,8 @@ import {
   Legend,
   CategoryScale,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import * as chartHelpers from "chart.js/helpers";
+import { Chart, Line, getElementAtEvent } from 'react-chartjs-2';
 
 import { WiggersDiagramData } from '@/data/graph/WiggersDiagramData';
 import { prepareDataset } from '@/utils/datahelper';
@@ -16,6 +17,8 @@ import { prepareDataset } from '@/utils/datahelper';
 ChartJS.register(LinearScale, PointElement, LineElement, CategoryScale, Tooltip, Legend);
 
 const WiggersDiagram: React.FC = () => {
+
+  const chartRef = useRef(null);
 
   const options = {
     scales: {
@@ -40,7 +43,22 @@ const WiggersDiagram: React.FC = () => {
       position: 'right',
     },
     tooltip: {
-      enabled: false,
+      enabled: true,
+      mode: 'index',
+      intersect: true,
+      callbacks: {
+        label: function(context) {
+          var label = context.dataset.label || '';
+
+          if (context.parsed.y !== null) {
+            label += ': ' + context.parsed.y;
+          }
+          return label;
+        },
+        title: function(context) {
+          return context[0].label;
+        }
+      }
     },
     customLegend: {
       id: 'customLegend',
@@ -62,37 +80,81 @@ const WiggersDiagram: React.FC = () => {
       
           // Draw the label at the maximum x-coordinate and the y-coordinate of the last point
           ctx.fillStyle = dataset.borderColor;
-          ctx.fillText(dataset.label, maxX +10, y);
+          ctx.fillText(dataset.label, maxX -50, y);
         });
       },
     },
   },
-  onHover: (event, chartElement) => {
-    if (chartElement.length > 0) {
-      const index = chartElement[0].index;
-      const chart = chartElement[0].chart;
-      const datasets = chart.data.datasets;
+  events: ['mousemove', 'mouseout'],
+  onHover: (event) => {
+  //   const chart = chartRef.current;
+  //   if (chartRef.current && event) {
+  //     const elements = chart.getElementsAtEventForMode(event, 'index', { intersect: true }, true);
+  
+  //   if (elements?.length) {
+  //     const element = elements.find(el => el.elementType === 'line');
+  //     if (!element) return;
+  //     const { datasetIndex, index } = element[0];
+  //     const x = chart.scales.x.getValueForPixel(event.x);
+  //     const y = chart.scales.y.getValueForPixel(event.y);
+  
+  //     // Draw a circle over the coordinates
+  //     chart.data.datasets[datasetIndex].pointRadius[index] = 5;
+  
+  //     // Find all other dataset lines with the same x coordinate
+  //     const elementsAtSameX = chart.getElementsAtXAxis(event);
+  
+  //     elementsAtSameX.forEach(el => {
+  //       if (el.datasetIndex !== datasetIndex) {
+  //         // Draw a circle over the y coordinate where the x intersects y
+  //         chart.data.datasets[el.datasetIndex].pointRadius[el.index] = 5;
+  //       }
+  //     });
+  
+  //     chart.update();
+  //   } else {
+  //     // Reset pointRadius to default when not hovering over a point
+  //     chart.data.datasets.forEach(dataset => {
+  //       dataset.pointRadius = 1; // reset to your default pointRadius
+  //     });
+  
+  //     chart.update();
+  //   }
+  // }
 
-      // Highlight the corresponding point in all datasets
-      datasets.forEach((dataset) => {
-        const meta = chart.getDatasetMeta(dataset.index);
-        const element = meta.data[index];
+  const chart = chartRef.current;
+  if (chart && event) {
+    const canvasPosition = chartHelpers.getRelativePosition(event, chart);
+    const xIndex = chart.scales['x'].getValueForPixel(canvasPosition.x);
+  
+    // Interpolate the y value for the given x
+    const dataset = chart.data.datasets[0]; // Assuming you're interested in the first dataset
+    const x1 = dataset.data[xIndex - 1].x;
+    const y1 = dataset.data[xIndex - 1].y;
+    const x2 = dataset.data[xIndex].x;
+    const y2 = dataset.data[xIndex].y;
+  
+    const interpolatedY = y1 + ((canvasPosition.x - x1) * (y2 - y1)) / (x2 - x1);
+  
+    console.log(`x: ${canvasPosition.x}, y: ${interpolatedY}`);
+  }
 
-        // Change the point style to highlight it
-        element.pointStyle = 'circle';
-        element.backgroundColor = 'red';
-        element.radius = 5;
-      });
-
-      // Update the chart to reflect the changes
-      chart.update();
-    }
   },
+
   };
 
   ChartJS.register(options.plugins.customLegend);
 
-  return <Line width={600} height={459} options={options} data={prepareDataset(WiggersDiagramData)} />;
+  
+  useEffect(() => {
+    const chart = chartRef.current;
+
+    if (chart) {
+      console.log('ChartJS', chart);
+    }
+  }, []);
+
+  return <Chart ref={chartRef} type='line' data={prepareDataset(WiggersDiagramData)} options={options} width={600} height={459}/>;
 };
 
 export default WiggersDiagram;
