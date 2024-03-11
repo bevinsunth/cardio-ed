@@ -1,14 +1,17 @@
 import PressureVolumeLoop from '@/components/PressureVolumeLoop';
-import WiggersDiagram from '@/components/WiggersDiagram';
-import SourceImage from '@/components/SourceImage';
-import TargetImage from '@/components/TargetImage';
+
+import dynamic from "next/dynamic";
+
+export const components = {
+  wiggers_diagram: dynamic(() => import("@/components/WiggersDiagramD3"), {ssr: false}),
+};
 
 
 const Home: React.FC = () => {
   return (
     <>
-    <PressureVolumeLoop />
-    <WiggersDiagram />
+    {/* <PressureVolumeLoop /> */}
+    <components.wiggers_diagram />
     </>
   );
 };
