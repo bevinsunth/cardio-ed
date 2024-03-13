@@ -1,37 +1,38 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
-
+import graphData from '@/data/graph/graphData.json';
 
 
 const SingleLineGraph = () => {
 
     const ref = useRef<SVGSVGElement | null>(null);
+
+ let maxXValue =   findMaxX(graphData);
+ let maxYValue =   findMaxY(graphData);
     
-const height = 500
-const width = 500
+const height = maxYValue
+const width = maxXValue
 const margin = { "top": 20, "bottom": 20, "left": 20, "right": 20 }
 
-const data = [2, 5, 6, 7, 3, 8, 3, 4];
+//only single array now
+let lineCoordinates = convertJsonArrayToCoordinates(graphData);
 
-useEffect(() => {
-
-let xScale =  d3.scaleLinear()
-    .domain([0, data.length - 1])
+    //Domain is the range of values for the x and y axis
+    //Range is the range of pixels for the x and y axis
+    let xScale =  d3.scaleLinear()
+    .domain([0, maxXValue])
     .range([0, width])
 
 let yScale = d3.scaleLinear()
-    .domain([0, 10])
-    .range([height, 0])
+    .domain([0, maxYValue])
+    .range([0, height])
 
-let xAxis = d3.axisBottom(xScale)
-let yAxis = d3.axisLeft(yScale)
+useEffect(() => {
 
-let curve = d3.curveCatmullRom.alpha(0.5)
 
-let line = d3.line()
-    .x(function (d, i) { return xScale(i) })
-    .y(function (d) { return yScale(Number(d)) }) // Cast the value to a number
-    .curve(curve);
+// let xAxis = d3.axisBottom(xScale)
+// let yAxis = d3.axisLeft(yScale)
+
 
 let svg = d3.select(ref.current!)
     .append("svg")
@@ -41,15 +42,23 @@ let svg = d3.select(ref.current!)
 let g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-g.append("g")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis)
+// g.append("g")
+//     .attr("transform", "translate(0," + height + ")")
+//     .call(xAxis)
 
 
-g.append("g").call(yAxis)
+// g.append("g").call(yAxis)
+
+let curve = d3.curveCatmullRom.alpha(0.5)
+
+// Define line generator
+const line = d3.line<{ x: number; y: number }>()
+    .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
+    .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
+    .curve(curve);
 
 let path = g.append("path")
-    .datum(data)
+    .datum(lineCoordinates as { x: number; y: number }[]) // Cast lineCoordinates to the correct type
     .attr("d", line)
 
 let pathNode = path.node();
@@ -58,13 +67,8 @@ let pathNodeLength = pathNode ? pathNode.getTotalLength() : 0;
 //for every x coordinate, get the y coordinates for the line
 //and store for use later on
 let allCoordinates: {}[] = [];
-let x = 0;
 
-for (x; x < width; x++) {
-    let obj = {}
-    obj.y = findY(pathNode, pathNodeLength, x, width)
-    allCoordinates.push(obj)
-}
+allCoordinates = getAllPathCoordinates(pathNode, pathNodeLength);
 
 let dots = g.selectAll(".dot")
     .data([1]) //create one circle for later use
@@ -92,12 +96,16 @@ let rect = g.append("rect")
 
         let mouseX = d3.pointer(d)[0]
 
-        let closestXValueInallCoordinates = Object.keys(allCoordinates).reduce((prev, curr) => {
-            return (Math.abs(Number(curr) - mouseX) < Math.abs(Number(prev) - mouseX) ? curr : prev);
-            });
+        // let closestXValueInallCoordinates = Object.keys(allCoordinates).reduce((prev, curr) => {
+        //     return (Math.abs(Number(curr) - mouseX) < Math.abs(Number(prev) - mouseX) ? curr : prev);
+        //     });
+
+        let matchingXcoordinate = allCoordinates.find(coordinate => coordinate.x === mouseX);
+
+        if (!matchingXcoordinate) {return;}
 
         let dotsData = [
-            { "cx": mouseX, "cy": allCoordinates[Number(closestXValueInallCoordinates)].y}
+            { "cx": matchingXcoordinate.x, "cy": matchingXcoordinate.y}
         ]
 
         dots.data(dotsData)
@@ -126,7 +134,41 @@ let rect = g.append("rect")
 
     })
 
-        
+
+function roundNumber(n: number) {
+    return Math.round(n * 100) / 100
+}
+
+return <svg ref={ref} width={600} height={459}/>;
+};
+
+function findMaxX(data: any[]) {
+    return Math.max(...data.map(item => item.x));
+  }
+
+  function findMaxY(data: any[]) {
+    return Math.max(...data.map(item => item.y));
+  }
+
+  function convertJsonArrayToCoordinates(data: any[]) {
+    return data.map(item => ({x: item.x, y: item.y}));
+  }
+
+  function interpolateCoordinateValues(data: any[], pathNode: SVGPathElement | null, pathNodeLength: number, width: number) {
+    return data.map(item => ({x: item.x, y: findY(pathNode, pathNodeLength, item.x , width)}));
+  }
+
+  function getAllPathCoordinates(path: SVGPathElement | null, pathLength: number) {
+    let coordinates: {x: number, y: number}[] = [];
+    for (let i = 0; i <= pathLength; i++) {
+        let pos = path?.getPointAtLength(i);
+        if (pos) {
+            coordinates.push({x: Math.floor(pos.x), y: Math.floor(pos.y)});
+        }
+    }
+    return coordinates;
+}
+
   //iteratively search a path to get a point close to a desired x coordinate
 function findY(path: SVGPathElement | null, pathLength: number, x: number, width: number) {
     const accuracy = 1 //px
@@ -145,13 +187,5 @@ function findY(path: SVGPathElement | null, pathLength: number, x: number, width
     }
     return y;
 }
-
-function roundNumber(n: number) {
-    return Math.round(n * 100) / 100
-}
-
-return <svg ref={ref} width={520} height={520}/>;
-};
-
 
 export default SingleLineGraph;
