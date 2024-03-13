@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 
 const SingleLineGraph = () => {
 
-    const ref = useRef();
+    const ref = useRef<SVGSVGElement | null>(null);
     
 const height = 500
 const width = 500
@@ -30,10 +30,11 @@ let curve = d3.curveCatmullRom.alpha(0.5)
 
 let line = d3.line()
     .x(function (d, i) { return xScale(i) })
-    .y(function (d) { return yScale(d) })
+    .y(function (d) { return yScale(Number(d)) }) // Cast the value to a number
     .curve(curve);
 
-let svg = d3.select(ref.current).append("svg")
+let svg = d3.select(ref.current!)
+    .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
 
@@ -44,18 +45,19 @@ g.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis)
 
+
 g.append("g").call(yAxis)
 
 let path = g.append("path")
     .datum(data)
     .attr("d", line)
 
-let pathNode = path.node()
-let pathNodeLength = pathNode.getTotalLength()
+let pathNode = path.node();
+let pathNodeLength = pathNode ? pathNode.getTotalLength() : 0;
 
 //for every x coordinate, get the y coordinates for the line
 //and store for use later on
-let allCoordinates = []
+let allCoordinates: {}[] = [];
 let x = 0;
 
 for (x; x < width; x++) {
@@ -90,8 +92,12 @@ let rect = g.append("rect")
 
         let mouseX = d3.pointer(d)[0]
 
+        let closestXValueInallCoordinates = Object.keys(allCoordinates).reduce((prev, curr) => {
+            return (Math.abs(Number(curr) - mouseX) < Math.abs(Number(prev) - mouseX) ? curr : prev);
+            });
+
         let dotsData = [
-            { "cx": mouseX, "cy": allCoordinates[mouseX].y}
+            { "cx": mouseX, "cy": allCoordinates[Number(closestXValueInallCoordinates)].y}
         ]
 
         dots.data(dotsData)
@@ -122,7 +128,7 @@ let rect = g.append("rect")
 
         
   //iteratively search a path to get a point close to a desired x coordinate
-function findY(path, pathLength, x, width) {
+function findY(path: SVGPathElement | null, pathLength: number, x: number, width: number) {
     const accuracy = 1 //px
     const iterations = Math.ceil(Math.log10(accuracy/width) / Math.log10(0.5));  //for width (w), get the # iterations to get to the desired accuracy, generally 1px
     let i = 0;
@@ -130,15 +136,17 @@ function findY(path, pathLength, x, width) {
     let nextLength = pathLength / 2;
     let y = 0;
     for (i; i < iterations; i++) {
-        let pos = path.getPointAtLength(nextLength)
-        y = pos.y
-        nextLength = x < pos.x ? nextLength - nextLengthChange : nextLength + nextLengthChange
-        nextLengthChange = nextLengthChange / 2
+        let pos = path?.getPointAtLength(nextLength); // Add null check
+        if (pos) {
+            y = pos.y;
+            nextLength = x < pos.x ? nextLength - nextLengthChange : nextLength + nextLengthChange;
+            nextLengthChange = nextLengthChange / 2;
+        }
     }
-    return y
+    return y;
 }
 
-function roundNumber(n) {
+function roundNumber(n: number) {
     return Math.round(n * 100) / 100
 }
 
