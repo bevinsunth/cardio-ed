@@ -25,3 +25,7 @@ type DatasetType = {
       })),
     };
   }
+
+  export function roundNumber(n: number) {
+    return Math.round(n * 100) / 100
+}

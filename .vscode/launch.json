@@ -22,7 +22,11 @@
           "pattern": "- Local:.+(https?://.+)",
           "uriFormat": "%s",
           "action": "debugWithChrome"
-        }
+        },
+        "resolveSourceMapLocations": [
+          "${workspaceFolder}/src/pages",
+          "!/node_modules/**"
+      ],
       }
     ]
   }
