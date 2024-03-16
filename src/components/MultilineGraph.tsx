@@ -2,6 +2,17 @@ import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
 import multilineGraphData from '@/data/graph/multilineGraphData.json';
 
+type Coordinate = {
+    x: number;
+    y: number;
+  };
+  
+  type GraphData = {
+    label: string;
+    coordinates: Coordinate[];
+    color: string;
+  }[];
+  
 
 interface PathCoordinates {
     coordinates: { x: number; y: number }[];
@@ -12,16 +23,21 @@ const MultilineGraph = () => {
 
     const ref = useRef<SVGSVGElement | null>(null);
     const allCoordinates = useRef<PathCoordinates>({});
+    const lineNames = multilineGraphData.map(line => line.label);
 
     let maxXValue = findMaxX(multilineGraphData);
     let maxYValue = findMaxY(multilineGraphData);
 
     const height = maxYValue
+
     const width = maxXValue
     const margin = { "top": 20, "bottom": 20, "left": 20, "right": 20 }
 
-    //Domain is the range of values for the x and y axis
-    //Range is the range of pixels for the x and y axis
+    //var graphData = convertJsonToLineData(multilineGraphData);
+
+    // Domain is the range of values for the x and y axis
+    // Range is the range of pixels for the x and y axis
+
     let xScale = d3.scaleLinear()
         .domain([0, maxXValue])
         .range([0, width])
@@ -30,6 +46,7 @@ const MultilineGraph = () => {
         .domain([0, maxYValue])
         .range([0, height])
 
+
         useEffect(() => {
 
     let svg = d3.select(ref.current!)
@@ -37,113 +54,183 @@ const MultilineGraph = () => {
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
 
-    let g = svg.append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-    let curve = d3.curveCatmullRom.alpha(0.5)
+        var mouseUnderlay = svg.append("rect")
+        .attr("x", margin.left)
+        .attr("y", margin.top)
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "#fff");
 
     // Define line generator
-    const line = d3.line<{ x: number; y: number }>()
+    const line = d3.line<Coordinate>()
         .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
         .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
-        .curve(curve);
+        .curve(d3.curveCardinal)
 
-    //Add a rect to handle mouse events
-    let rect = g.append("rect")
-        .attr("width", width - 1) // minus 1 so that it doesn't return an x = width, as the coordinates is 0 based.
-        .attr("height", height)
-        .style("opacity", 0)
-        .on("mousemove", handleMouseMove);
+
+
+    var lineGroup = svg.append("g")
+        .attr("transform", "translate(" + margin.left + ", 0)");
+    
+        var lines = lineGroup.selectAll(".gLine")
+        .data(multilineGraphData)
+        .enter()
+        .append("path")
+        .attr("class","gLine")
+        .attr("d", function (d) {
+            return line(d.coordinates.sort((a, b) => a.x - b.x));
+        })
+        .attr("stroke", function (d,i) {
+            return multilineGraphData[i].color;
+        })
+        .attr("fill", "transparent")
+        .attr("stroke-width", "2px");
+
+        var circles = lineGroup.selectAll("circle")
+        .data(multilineGraphData)
+        .enter()
+        .append("circle")
+        //.attr("opacity", 0)
+        .attr("r", 6)
+        .attr("fill", function (d, i) {
+            return multilineGraphData[i].color;
+        });
+
+
+
+        mouseUnderlay.on("mousemove", function (d) {
+            let x = Math.floor(d3.pointer(d)[0])
+    
+            lines.each(function (d, i) {
+                var pathEl = this;
+                var pathLength = pathEl.getTotalLength();
+                var beginning = x, end = pathLength, target, pos;
+    
+                while (true) {
+                    target = Math.floor((beginning + end) / 2);
+                    pos = pathEl.getPointAtLength(target);
+                    if ((target === end || target === beginning) && Math.floor(pos.x) !== x) {
+                        break;
+                    }
+                    if (Math.floor(pos.x) > x) {
+                        end = target;
+                    } else if (Math.floor(pos.x) < x) {
+                        beginning = target;
+                    } else {
+                        break; //position found
+                    }
+                }
+    
+                circles.filter(function (d, index) {
+                    return i == index;
+                })
+                    .attr("opacity", 1)
+                    .attr("cx", pos.x)
+                    .attr("cy", pos.y);
+            });
+        });
+
+    // //Add a rect to handle mouse events
+    // let rect = g.append("rect")
+    //     .attr("width", width - 1) // minus 1 so that it doesn't return an x = width, as the coordinates is 0 based.
+    //     .attr("height", height)
+    //     .style("opacity", 0)
+    //     .on("mousemove", handleMouseMove);
+
+
+    
+
 
     // Loop through datasets
-    multilineGraphData.forEach((graphData, i) => {
+    // multilineGraphData.forEach((graphData, i) => {
 
-        //only single array now
-        let lineCoordinates = convertJsonArrayToCoordinates(graphData.coordinates).sort((a, b) => a.x - b.x);;
-
-
-            let path = g.append("path")
-                .datum(lineCoordinates as { x: number; y: number }[]) // Cast lineCoordinates to the correct type
-                .attr("d", line)
-                .attr("id", graphData.label)
-                .attr('fill', 'none')
-                .attr('stroke', graphData.color)
-                .attr('stroke-width', 1.5)
+    //     //only single array now
+    //     let lineCoordinates = convertJsonArrayToCoordinates(graphData.coordinates).sort((a, b) => a.x - b.x);;
 
 
-            let pathNode = path.node();
-            let pathNodeLength = pathNode ? Math.round(pathNode.getTotalLength()) : 0;
+    //         let path = g.append("path")
+    //             .datum(lineCoordinates as { x: number; y: number }[]) // Cast lineCoordinates to the correct type
+    //             .attr("d", line)
+    //             .attr("id", graphData.label)
+    //             .attr('fill', 'none')
+    //             .attr('stroke', graphData.color)
+    //             .attr('stroke-width', 1.5)
 
-            allCoordinates.current[graphData.label] = { coordinates: getAllPathCoordinates(pathNode, pathNodeLength) };
 
-        })
+    //         let pathNode = path.node();
+    //         let pathNodeLength = pathNode ? Math.round(pathNode.getTotalLength()) : 0;
+
+    //         allCoordinates.current[graphData.label] = { coordinates: getAllPathCoordinates(pathNode, pathNodeLength) };
+
+    //         let dots = g.selectAll(".dot")
+    //         .data(Array(multilineGraphData.length).fill(0)) // create circles for later use
+    //         .enter()
+    //         .append("g")
+    //         .style("opacity", 0);
+        
+    //     dots.append("circle").attr("r", 8);
+
+
+    //     })
 
     })
 
 
-    function handleMouseMove(d) {
+    // function handleMouseMove(d) {
 
-        let g = d3.select(ref.current).select("g");
+    //     let g = d3.select(ref.current).select("g");
+    //     let dots = d3.select(ref.current).selectAll(".dot");
 
-        // Remove existing dots
-        let mouseX = d3.pointer(d)[0]
+    //     // Remove existing dots
+    //     let mouseX = d3.pointer(d)[0]
 
-        let matchingXcoordinates = findCoordinatesByX(mouseX);
+    //     let matchingXcoordinates = findCoordinatesByX(mouseX);
 
-        if (!matchingXcoordinates) { return; }
+        
 
-        matchingXcoordinates.forEach((matchingCoordinate, i) => {
+    //     if (!matchingXcoordinates) { return; }
+        
 
-            let dots = g.selectAll(".dot")
-                .data([1]) //create one circle for later use
-                .enter()
-                .append("g")
-                .attr("id", "dot-" + matchingCoordinate.lineName)
-                .style("opacity", 0)
-
-            dots.append("circle")
-                .attr("r", 8)
-
-            const dotsBgdText = dots.append("text")
-                .attr("class", "text-bgd")
-                .attr("x", 0)
-
-            const dotsText = dots.append("text")
-                .attr("class", "text-fgd")
-                .attr("x", 0)
+    //     // matchingXcoordinates.forEach((matchingCoordinate, i) => {
 
 
-            let dotsData = [
-                { "cx": matchingCoordinate.x, "cy": matchingCoordinate.y }
-            ]
+    //     let dotsData = matchingXcoordinates.map((matchingCoordinate) => {
+    //         return {cx: matchingCoordinate.x, cy: matchingCoordinate.y};
+    //     });
 
-            dots.data(dotsData)
-                .attr("transform", function (d) { return "translate(" + d.cx + "," + d.cy + ")" })
-                .style("opacity", 1)
-                .attr("id", "dot-" + matchingCoordinate.lineName)
+    //         dots.data(dotsData)
+    //             .attr("transform", function (d) { return "translate(" + d.cx + "," + d.cy + ")" })
+    //             .style("opacity", 1)
 
-            dotsText.data(dotsData)
-                .text(function (d) {
-                    return roundNumber(yScale.invert(d.cy));
-                })
-                .attr("y", function (d) {
-                    let maxY = d3.max(dotsData, function (e) { return e.cx == d.cx ? e.cy : 0 })
-                    return d.cy == maxY ? 27 : -15;
-                })
-                .attr("id", "dottext-" + matchingCoordinate.lineName);
+                    
+    //     const dotsBgdText = dots.append("text")
+    //     .attr("class", "text-bgd")
+    //     .attr("x", 0)
 
-            dotsBgdText.data(dotsData)
-                .text(function (d) {
-                    return roundNumber(yScale.invert(d.cy));
-                })
-                .attr("y", function (d) {
-                    let maxY = d3.max(dotsData, function (e) { return e.cx == d.cx ? e.cy : 0 })
-                    return d.cy == maxY ? 27 : -15;
-                })
-                .attr("id", "dotBgdtext-" + matchingCoordinate.lineName);
+    // const dotsText = dots.append("text")
+    //     .attr("class", "text-fgd")
+    //     .attr("x", 0)
 
-        })
-    }
+    //         dotsText.data(dotsData)
+    //             .text(function (d) {
+    //                 return roundNumber(yScale.invert(d.cy));
+    //             })
+    //             .attr("y", function (d) {
+    //                 let maxY = d3.max(dotsData, function (e) { return e.cx == d.cx ? e.cy : 0 })
+    //                 return d.cy == maxY ? 27 : -15;
+    //             })
+
+    //         dotsBgdText.data(dotsData)
+    //             .text(function (d) {
+    //                 return roundNumber(yScale.invert(d.cy));
+    //             })
+    //             .attr("y", function (d) {
+    //                 let maxY = d3.max(dotsData, function (e) { return e.cx == d.cx ? e.cy : 0 })
+    //                 return d.cy == maxY ? 27 : -15;
+    //             })
+
+    //     // })
+    // }
 
 
     function findCoordinatesByX(xValue: number): { x: number; y: number; lineName: string }[] {
@@ -217,6 +304,10 @@ function findMaxY(data: any[]) {
 
 function convertJsonArrayToCoordinates(data: any[]) {
     return data.map(item => ({ x: item.x, y: item.y }));
+}
+
+function convertJsonToLineData(data: GraphData) {
+    return data.map(line => line.coordinates);
 }
 
 function interpolateCoordinateValues(data: any[], pathNode: SVGPathElement | null, pathNodeLength: number, width: number) {
