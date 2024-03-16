@@ -104,7 +104,6 @@ const MultilineGraph = () => {
             lines.each(function (d, i) {
                 var pathEl = this;
                 var pathLength = pathEl.getTotalLength();
-                pathEl.
                 var beginning = x, end = pathLength, target, pos;
     
                 while (true) {
