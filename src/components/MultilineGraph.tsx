@@ -19,116 +19,113 @@ interface PathCoordinates {
     [key: string]: any; // Add index signature
 }
 
+let maxXValue = findMaxX(multilineGraphData);
+let maxYValue = findMaxY(multilineGraphData);
+const height = maxYValue
+const width = maxXValue
+
+const biggestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => b - a)[0];
+
+let xScale = d3.scaleLinear()
+    .domain([biggestFirstX, maxXValue])
+    .range([0, width])
+
+let yScale = d3.scaleLinear()
+    .domain([0, maxYValue])
+    .range([0, height])
+
+
 const MultilineGraph = () => {
-
     const ref = useRef<SVGSVGElement | null>(null);
-    const allCoordinates = useRef<PathCoordinates>({});
-    const lineNames = multilineGraphData.map(line => line.label);
-
-    let maxXValue = findMaxX(multilineGraphData);
-    let maxYValue = findMaxY(multilineGraphData);
-
-    const height = maxYValue
-
-    const width = maxXValue
-    const margin = { "top": 20, "bottom": 20, "left": 20, "right": 20 }
+    console.log()
+    // const allCoordinates = useRef<PathCoordinates>({});
 
     //var graphData = convertJsonToLineData(multilineGraphData);
 
     // Domain is the range of values for the x and y axis
     // Range is the range of pixels for the x and y axis
 
-    let xScale = d3.scaleLinear()
-        .domain([0, maxXValue])
-        .range([0, width])
+    useEffect(() => {
+        let svg = d3.select(ref.current)
+            .attr("width", width)
+            .attr("height", height)
 
-    let yScale = d3.scaleLinear()
-        .domain([0, maxYValue])
-        .range([0, height])
+        // let mouseUnderlay = svg.append("rect")
+        //     .attr("x", margin.left)
+        //     .attr("y", margin.top)
+        //     .attr("width", width)
+        //     .attr("height", height)
+        //     .attr("fill", "#fff");
 
+        // Define line generator
+        const line = d3.line<Coordinate>()
+            .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
+            .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
+            .curve(d3.curveCardinal)
 
-        useEffect(() => {
-
-    let svg = d3.select(ref.current!)
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-
-        var mouseUnderlay = svg.append("rect")
-        .attr("x", margin.left)
-        .attr("y", margin.top)
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "#fff");
-
-    // Define line generator
-    const line = d3.line<Coordinate>()
-        .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
-        .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
-        .curve(d3.curveCardinal)
-
-
-
-    var lineGroup = svg.append("g")
-        .attr("transform", "translate(" + margin.left + ", 0)");
+        var lineGroup = svg.append("g");
     
         var lines = lineGroup.selectAll(".gLine")
-        .data(multilineGraphData)
-        .enter()
-        .append("path")
-        .attr("class","gLine")
-        .attr("d", function (d) {
-            return line(d.coordinates.sort((a, b) => a.x - b.x));
-        })
-        .attr("stroke", function (d,i) {
-            return multilineGraphData[i].color;
-        })
-        .attr("fill", "transparent")
-        .attr("stroke-width", "2px");
+            .data(multilineGraphData)
+            .enter()
+            .append("path")
+            .attr("class","gLine")
+            .attr("d", function (d) {
+                return line(d.coordinates.sort((a, b) => a.x - b.x));
+            })
+            .attr("stroke", function (d,i) {
+                return multilineGraphData[i].color;
+            })
+            .attr("fill", "transparent")
+            .attr("stroke-width", "2px");
 
         var circles = lineGroup.selectAll("circle")
-        .data(multilineGraphData)
-        .enter()
-        .append("circle")
-        //.attr("opacity", 0)
-        .attr("r", 6)
-        .attr("fill", function (d, i) {
-            return multilineGraphData[i].color;
-        });
-
-
-
-        mouseUnderlay.on("mousemove", function (d) {
-            let x = Math.floor(d3.pointer(d)[0]) - margin.left
-    
-            lines.each(function (d, i) {
-                var pathEl = this;
-                var pathLength = pathEl.getTotalLength();
-                var beginning = x, end = pathLength, target, pos;
-    
-                while (true) {
-                    target = Math.floor((beginning + end) / 2);
-                    pos = pathEl.getPointAtLength(target);
-                    if ((target === end || target === beginning) && Math.floor(pos.x) !== x) {
-                        break;
-                    }
-                    if (Math.floor(pos.x) > x) {
-                        end = target;
-                    } else if (Math.floor(pos.x) < x) {
-                        beginning = target;
-                    } else {
-                        break; //position found
-                    }
-                }
-    
-                circles.filter(function (d, index) {
-                    return i == index;
-                })
-                    .attr("opacity", 1)
-                    .attr("cx", Math.floor(pos.x))
-                    .attr("cy", Math.floor(pos.y));
+            .data(multilineGraphData)
+            .enter()
+            .append("circle")
+            .attr("d", function (d) {
+                return line(d.coordinates.sort((a, b) => a.x - b.x));
+            })
+            //.attr("opacity", 0)
+            .attr("r", 6)
+            .attr("fill", function (d, i) {
+                return multilineGraphData[i].color;
             });
-        });
+
+            if (ref && ref.current) {
+                ref.current.addEventListener("mousemove", function (d) {
+                    let mouseX = Math.floor(d3.pointer(d)[0])
+            
+                    lines.each(function (d, i) {
+                        var pathEl = this;
+                        var pathLength = pathEl.getTotalLength();
+                        var beginning = mouseX, end = pathLength, target, pos;
+            
+                        while (true) {
+                            target = Math.floor((beginning + end) / 2);
+                            pos = pathEl.getPointAtLength(target);
+                            if ((target === end || target === beginning) && Math.floor(pos.x) !== mouseX) {
+                                break;
+                            }
+                            if (Math.floor(pos.x) > mouseX) {
+                                end = target;
+                            } else if (Math.floor(pos.x) < mouseX) {
+                                beginning = target;
+                            } else {
+                                break; //position found
+                            }
+                        }
+            
+                        circles.filter(function (d, index) {
+                            return i == index;
+                        })
+                        .attr("opacity", 1)
+                        .attr("cx", d => mouseX)
+                        .attr("cy", d => yScale(pos.y as number));
+                    });
+                });
+            }
+        }, [ref]);
 
     // //Add a rect to handle mouse events
     // let rect = g.append("rect")
@@ -173,7 +170,6 @@ const MultilineGraph = () => {
 
     //     })
 
-    })
 
 
     // function handleMouseMove(d) {
@@ -233,24 +229,24 @@ const MultilineGraph = () => {
     // }
 
 
-    function findCoordinatesByX(xValue: number): { x: number; y: number; lineName: string }[] {
-        let matchingCoordinates: { x: number; y: number; lineName: string }[] = [];
+    // function findCoordinatesByX(xValue: number): { x: number; y: number; lineName: string }[] {
+    //     let matchingCoordinates: { x: number; y: number; lineName: string }[] = [];
 
-        if (allCoordinates.current) {
-            for (let key in allCoordinates.current) {
-                let pathCoordinates = allCoordinates.current[key];
-                for (let coordinate of pathCoordinates.coordinates) {
-                    if (coordinate.x === xValue) {
-                        matchingCoordinates.push({ x: coordinate.x, y: coordinate.y, lineName: key });
-                    }
-                }
-            }
-        }
+    //     if (allCoordinates.current) {
+    //         for (let key in allCoordinates.current) {
+    //             let pathCoordinates = allCoordinates.current[key];
+    //             for (let coordinate of pathCoordinates.coordinates) {
+    //                 if (coordinate.x === xValue) {
+    //                     matchingCoordinates.push({ x: coordinate.x, y: coordinate.y, lineName: key });
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        return matchingCoordinates;
-    }
+    //     return matchingCoordinates;
+    // }
 
-    return <svg ref={ref} width={600} height={459} />;
+    return <svg ref={ref} />;
 };
 
 // function handleMouseMove(d) {
