@@ -99,11 +99,12 @@ const MultilineGraph = () => {
 
 
         mouseUnderlay.on("mousemove", function (d) {
-            let x = Math.floor(d3.pointer(d)[0])
+            let x = Math.floor(d3.pointer(d)[0]) - margin.left
     
             lines.each(function (d, i) {
                 var pathEl = this;
                 var pathLength = pathEl.getTotalLength();
+                pathEl.
                 var beginning = x, end = pathLength, target, pos;
     
                 while (true) {
@@ -125,8 +126,8 @@ const MultilineGraph = () => {
                     return i == index;
                 })
                     .attr("opacity", 1)
-                    .attr("cx", pos.x)
-                    .attr("cy", pos.y);
+                    .attr("cx", Math.floor(pos.x))
+                    .attr("cy", Math.floor(pos.y));
             });
         });
 
