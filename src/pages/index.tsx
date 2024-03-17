@@ -1,12 +1,17 @@
-import PressureVolumeLoop from '@/components/PressureVolumeLoop';
-import SourceImage from '@/components/SourceImage';
-import TargetImage from '@/components/TargetImage';
+import dynamic from "next/dynamic";
+
+export const components = {
+  pressureVolumeLoop: dynamic(() => import("@/components/PressureVolumeLoop"), {ssr: false}),
+  multilineLineGraph: dynamic(() => import("@/components/WiggersDiagram"), {ssr: false}),
+};
 
 
 const Home: React.FC = () => {
   return (
     <>
-    <PressureVolumeLoop />
+    <components.pressureVolumeLoop />
+    <br/>
+    <components.multilineLineGraph />
     </>
   );
 };

@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
-import multilineGraphData from '@/data/graph/multilinepressureVolumeGraphData.json';
+import multilineGraphData from '@/data/graph/multilinewiggersGraphData.json';
 
 type Coordinate = {
     x: number;
@@ -14,13 +14,15 @@ type Coordinate = {
   }[];
   
 
-// Define your margins
-const margin = { top: 10, right: 50, bottom: 30, left: 40 };
+interface PathCoordinates {
+    coordinates: { x: number; y: number }[];
+    [key: string]: any; // Add index signature
+}
 
 let maxXValue = findMaxX(multilineGraphData);
 let maxYValue = findMaxY(multilineGraphData);
-const height = maxYValue - margin.top - margin.bottom;
-const width = maxXValue - margin.left - margin.right;
+const height = maxYValue
+const width = maxXValue
 
 const biggestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => b - a)[0];
 
@@ -45,8 +47,8 @@ const MultilineGraph = () => {
 
     useEffect(() => {
         let svg = d3.select(ref.current)
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width)
+            .attr("height", height)
 
         // let mouseUnderlay = svg.append("rect")
         //     .attr("x", margin.left)
@@ -59,10 +61,9 @@ const MultilineGraph = () => {
         const line = d3.line<Coordinate>()
             .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
             .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
-            .curve(d3.curveMonotoneX)
+            .curve(d3.curveCardinal)
 
-        var lineGroup = svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var lineGroup = svg.append("g");
     
         var lines = lineGroup.selectAll(".gLine")
             .data(multilineGraphData)
@@ -70,7 +71,7 @@ const MultilineGraph = () => {
             .append("path")
             .attr("class","gLine")
             .attr("d", function (d) {
-                return line(d.coordinates);
+                return line(d.coordinates.sort((a, b) => a.x - b.x));
             })
             .attr("stroke", function (d,i) {
                 return multilineGraphData[i].color;
@@ -83,7 +84,7 @@ const MultilineGraph = () => {
             .enter()
             .append("circle")
             .attr("d", function (d) {
-                return line(d.coordinates);
+                return line(d.coordinates.sort((a, b) => a.x - b.x));
             })
             //.attr("opacity", 0)
             .attr("r", 6)
@@ -94,7 +95,6 @@ const MultilineGraph = () => {
             if (ref && ref.current) {
                 ref.current.addEventListener("mousemove", function (d) {
                     let mouseX = Math.floor(d3.pointer(d)[0])
-                    mouseX = mouseX - margin.left;
             
                     lines.each(function (d, i) {
                         var pathEl = this;
@@ -121,7 +121,7 @@ const MultilineGraph = () => {
                         })
                         .attr("opacity", 1)
                         .attr("cx", d => mouseX)
-                        .attr("cy", d => yScale.invert(pos.y as number));
+                        .attr("cy", d => yScale(pos.y as number));
                     });
                 });
             }
