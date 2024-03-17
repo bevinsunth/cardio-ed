@@ -59,7 +59,7 @@ const MultilineGraph = () => {
         const line = d3.line<Coordinate>()
             .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
             .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
-            .curve(d3.curveCardinal)
+            .curve(d3.curveMonotoneX)
 
         var lineGroup = svg.append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
