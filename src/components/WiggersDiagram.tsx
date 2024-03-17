@@ -99,7 +99,7 @@ const MultilineGraph = () => {
                     lines.each(function (d, i) {
                         var pathEl = this;
                         var pathLength = pathEl.getTotalLength();
-                        var beginning = mouseX, end = pathLength, target, pos;
+                        var beginning = mouseX, end = pathLength, target, pos: DOMPoint;
             
                         while (true) {
                             target = Math.floor((beginning + end) / 2);
@@ -315,8 +315,8 @@ function getAllPathCoordinates(path: SVGPathElement | null, pathLength: number) 
     for (let i = 0; i <= pathLength; i++) {
         let pos = path?.getPointAtLength(i);
         if (pos) {
-            if (!coordinates.some(coord => coord.x === Math.floor(pos.x))) {
-                coordinates.push({ x: Math.floor(pos.x), y: Math.floor(pos.y) });
+            if (!coordinates.some(coord => coord.x === Math.floor(pos?.x!))) {
+                coordinates.push({ x: Math.floor(pos?.x!), y: Math.floor(pos?.y!) });
             }
         }
     }
