@@ -5,22 +5,22 @@ import multilineGraphData from '@/data/graph/multilinepressureVolumeGraphData.js
 type Coordinate = {
     x: number;
     y: number;
-  };
-  
-  type GraphData = {
+};
+
+type GraphData = {
     label: string;
     coordinates: Coordinate[];
     color: string;
-  }[];
-  
+}[];
 
-// Define your margins
-const margin = { top: 10, right: 50, bottom: 30, left: 40 };
+
+// // Define your margins
+// const margin = { top: 10, right: 50, bottom: 30, left: 40 };
 
 let maxXValue = findMaxX(multilineGraphData);
 let maxYValue = findMaxY(multilineGraphData);
-const height = maxYValue - margin.top - margin.bottom;
-const width = maxXValue - margin.left - margin.right;
+const height = 440;
+const width = 446;
 
 const biggestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => b - a)[0];
 
@@ -45,8 +45,8 @@ const MultilineGraph = () => {
 
     useEffect(() => {
         let svg = d3.select(ref.current)
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
+            .attr("width", width + 30)
+            .attr("height", height + 30)
 
         // let mouseUnderlay = svg.append("rect")
         //     .attr("x", margin.left)
@@ -62,17 +62,17 @@ const MultilineGraph = () => {
             .curve(d3.curveMonotoneX)
 
         var lineGroup = svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    
+            .attr("transform", "translate(" + 10 + "," + 0 + ")");
+
         var lines = lineGroup.selectAll(".gLine")
             .data(multilineGraphData)
             .enter()
             .append("path")
-            .attr("class","gLine")
+            .attr("class", "gLine")
             .attr("d", function (d) {
                 return line(d.coordinates);
             })
-            .attr("stroke", function (d,i) {
+            .attr("stroke", function (d, i) {
                 return multilineGraphData[i].color;
             })
             .attr("fill", "transparent")
@@ -91,41 +91,39 @@ const MultilineGraph = () => {
                 return multilineGraphData[i].color;
             });
 
-            if (ref && ref.current) {
-                ref.current.addEventListener("mousemove", function (d) {
-                    let mouseX = Math.floor(d3.pointer(d)[0])
-                    mouseX = mouseX - margin.left;
-            
-                    lines.each(function (d, i) {
-                        var pathEl = this;
-                        var pathLength = pathEl.getTotalLength();
-                        var beginning = mouseX, end = pathLength, target, pos: DOMPoint;
-            
-                        while (true) {
-                            target = Math.floor((beginning + end) / 2);
-                            pos = pathEl.getPointAtLength(target);
-                            if ((target === end || target === beginning) && Math.floor(pos.x) !== mouseX) {
-                                break;
-                            }
-                            if (Math.floor(pos.x) > mouseX) {
-                                end = target;
-                            } else if (Math.floor(pos.x) < mouseX) {
-                                beginning = target;
-                            } else {
-                                break; //position found
-                            }
+        if (ref && ref.current) {
+            ref.current.addEventListener("mousemove", function (d) {
+                let pointer = d3.pointer(d);
+
+                lines.each(function (d, i) {
+                    var pathEl = this;
+                    var pathLength = pathEl.getTotalLength();
+
+                    let minDist = 20; // initialize minimum distance to Infinity
+                    let closestPoint: any; // initialize closest point
+
+                    for (let p = 0; p < pathLength; p++) {
+                        let point = pathEl.getPointAtLength(p);
+                        let dist = Math.sqrt(Math.pow(point.x - pointer[0], 2) + Math.pow(point.y - pointer[1], 2));
+                        if (dist < minDist) {
+                            minDist = dist;
+                            closestPoint = point;
                         }
-            
-                        circles.filter(function (d, index) {
-                            return i == index;
-                        })
+                    }
+
+                    if(closestPoint)
+{
+                    circles.filter(function (d, index) {
+                        return i == index;
+                    })
                         .attr("opacity", 1)
-                        .attr("cx", d => mouseX)
-                        .attr("cy", d => yScale.invert(pos.y as number));
-                    });
+                        .attr("cx", d => closestPoint.x)
+                        .attr("cy", d => closestPoint.y);
+                }
                 });
-            }
-        }, [ref]);
+            });
+        }
+    }, [ref]);
 
     // //Add a rect to handle mouse events
     // let rect = g.append("rect")
@@ -135,7 +133,7 @@ const MultilineGraph = () => {
     //     .on("mousemove", handleMouseMove);
 
 
-    
+
 
 
     // Loop through datasets
@@ -164,7 +162,7 @@ const MultilineGraph = () => {
     //         .enter()
     //         .append("g")
     //         .style("opacity", 0);
-        
+
     //     dots.append("circle").attr("r", 8);
 
 
@@ -182,10 +180,10 @@ const MultilineGraph = () => {
 
     //     let matchingXcoordinates = findCoordinatesByX(mouseX);
 
-        
+
 
     //     if (!matchingXcoordinates) { return; }
-        
+
 
     //     // matchingXcoordinates.forEach((matchingCoordinate, i) => {
 
@@ -198,7 +196,7 @@ const MultilineGraph = () => {
     //             .attr("transform", function (d) { return "translate(" + d.cx + "," + d.cy + ")" })
     //             .style("opacity", 1)
 
-                    
+
     //     const dotsBgdText = dots.append("text")
     //     .attr("class", "text-bgd")
     //     .attr("x", 0)
