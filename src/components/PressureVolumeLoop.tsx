@@ -51,7 +51,7 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
             .curve(d3.curveMonotoneX)
 
         var lineGroup = svg.append("g")
-            .attr("transform", "translate(" + 10 + "," + 0 + ")");
+            //.attr("transform", "translate(" + 0 + "," + 0 + ")");
 
         linesRef.current = lineGroup.selectAll(".gLine")
             .data(multilineGraphData)
