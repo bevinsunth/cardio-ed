@@ -81,8 +81,7 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagr
 
 const biggestLastX = multilineGraphData.map(line => line.coordinates[line.coordinates.length - 1].x).sort((a, b) => b - a)[0];
             multilineGraphData.forEach(graphData => {    
-                const lableYOffset = graphData.lableYOffset? graphData.lableYOffset : 0;
-                const lableXOffset = graphData.lableXOffset? graphData.lableXOffset : 0;        
+                const lableYOffset = graphData.lableYOffset? graphData.lableYOffset : 0;       
                 // Get the last data point for the series
                 const lastPoint = graphData.coordinates[graphData.coordinates.length - 1];
               
