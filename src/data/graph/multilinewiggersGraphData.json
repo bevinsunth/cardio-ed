@@ -99,7 +99,8 @@
       {"x": 442.6, "y": 228.1},
       {"x": 453.5, "y": 228.5}
     ],
-    "color": "#808080"
+    "color": "#808080",
+    "lableYOffset": -10
   },
   {
     "label": "Ventricular Volume",

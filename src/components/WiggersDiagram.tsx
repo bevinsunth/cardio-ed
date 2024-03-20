@@ -11,20 +11,13 @@ type GraphData = {
     label: string;
     coordinates: Coordinate[];
     color: string;
+    lableYOffset: number;
 }[];
-
-
-interface PathCoordinates {
-    coordinates: { x: number; y: number }[];
-    [key: string]: any; // Add index signature
-}
 
 let maxXValue = findMaxX(multilineGraphData);
 let maxYValue = findMaxY(multilineGraphData);
 const height = maxYValue
 const width = maxXValue
-
-const biggestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => b - a)[0];
 
 let xScale = d3.scaleLinear()
     .domain([0, maxXValue])
@@ -42,7 +35,7 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagr
 
     useEffect(() => {
         let svg = d3.select(ref.current)
-            .attr("width", width)
+            .attr("width", width + 150)
             .attr("height", height)
 
 
@@ -53,8 +46,6 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagr
             .curve(d3.curveCardinal)
 
         var lineGroup = svg.append("g");
-
-
         linesRef.current = lineGroup.selectAll(".gLine")
             .data(multilineGraphData)
             .enter()
@@ -81,6 +72,25 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagr
             .attr("fill", function (d, i) {
                 return multilineGraphData[i].color;
             });
+
+const biggestLastX = multilineGraphData.map(line => line.coordinates[line.coordinates.length - 1].x).sort((a, b) => b - a)[0];
+            multilineGraphData.forEach(graphData => {    
+                const lableYOffset = graphData.lableYOffset? graphData.lableYOffset : 0;
+                const lableXOffset = graphData.lableXOffset? graphData.lableXOffset : 0;        
+                // Get the last data point for the series
+                const lastPoint = graphData.coordinates[graphData.coordinates.length - 1];
+              
+                // Add legend text using transform for positioning
+                svg.append("text")
+                .attr("transform", () => {
+                    return `translate(${xScale(biggestLastX + 5 )}, ${yScale(lastPoint.y + lableYOffset)})`;
+                  })
+                  .attr("dy", ".35em") // Adjust for better alignment
+                  .attr("dx", ".5em") // Offset a bit to the right from the end of the line
+                  .style("fill", graphData.color) // Match the line color
+                  .text(graphData.label);
+              });
+              
 
 
         if (ref && ref.current) {
