@@ -12,6 +12,8 @@ type GraphData = {
     coordinates: Coordinate[];
     color: string;
     lableYOffset: number;
+    lineSize: number;
+    circleSize: number;
 }[];
 
 let maxXValue = findMaxX(multilineGraphData);
@@ -55,10 +57,12 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagr
                 return line(d.coordinates.sort((a, b) => a.x - b.x));
             })
             .attr("stroke", function (d, i) {
-                return multilineGraphData[i].color;
+                return d.color;
             })
             .attr("fill", "transparent")
-            .attr("stroke-width", "2px");
+            .attr("stroke-width", function (d) {
+                return d.lineSize !== undefined ? d.lineSize : 2;
+            });
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(multilineGraphData)
@@ -68,9 +72,11 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagr
                 return line(d.coordinates.sort((a, b) => a.x - b.x));
             })
             .attr("opacity", 0)
-            .attr("r", 6)
-            .attr("fill", function (d, i) {
-                return multilineGraphData[i].color;
+            .attr("r", function (d) {
+                return d.circleSize !== undefined ? d.circleSize : 6;
+            })
+            .attr("fill", function (d) {
+                return d.color;
             });
 
 const biggestLastX = multilineGraphData.map(line => line.coordinates[line.coordinates.length - 1].x).sort((a, b) => b - a)[0];
