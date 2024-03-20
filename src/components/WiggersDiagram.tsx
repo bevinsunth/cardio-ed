@@ -76,7 +76,7 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer:any, setWiggersDiagra
             .attr("d", function (d) {
                 return line(d.coordinates.sort((a, b) => a.x - b.x));
             })
-            //.attr("opacity", 0)
+            .attr("opacity", 0)
             .attr("r", 6)
             .attr("fill", function (d, i) {
                 return multilineGraphData[i].color;

@@ -22,10 +22,10 @@ let maxYValue = findMaxY(multilineGraphData);
 const height = 490;
 const width = 500;
 
-const biggestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => b - a)[0];
+// const smallestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => a - b)[0];
 
 let xScale = d3.scaleLinear()
-    .domain([biggestFirstX, maxXValue])
+    .domain([0 , maxXValue])
     .range([0, width])
 
 let yScale = d3.scaleLinear()
@@ -75,6 +75,7 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
                 return line(d.coordinates);
             })
             .attr("r", 6)
+            .attr("opacity", 0)
             .attr("fill", function (d, i) {
                 return multilineGraphData[i].color;
             });
@@ -100,29 +101,39 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
 
 
     function handleCircles(pointer: [number, number]) {
+
+        let minDist = 50; // initialize minimum distance to trigger hover
+        let closestPoint: 0; // initialize closest point
+        let closestLineIndex: number; // initialize index of the closest line
+        let lastClosestLineDistance = Infinity; // initialize index of the closest line
+
         linesRef.current.nodes().forEach((_lineNode: any, i: any) => {
             var pathEl = _lineNode;
             var pathLength = pathEl.getTotalLength();
 
-            let minDist = 50; // initialize minimum distance to trigger hover
-            let closestPoint: any; // initialize closest point
-
             for (let p = 0; p < pathLength; p++) {
                 let point = pathEl.getPointAtLength(p);
                 let dist = Math.sqrt(Math.pow(point.x - pointer[0], 2) + Math.pow(point.y - pointer[1], 2));
-                if (dist < minDist) {
+                if (dist < minDist && dist < lastClosestLineDistance) {
                     minDist = dist;
                     closestPoint = point;
+                    closestLineIndex = i;
+                    lastClosestLineDistance = dist;
                 }
             }
 
             if (closestPoint) {
-                circlesRef.current.filter(function (circle: any, index: number) {
-                    return i == index;
-                })
-                    .attr("opacity", 1)
-                    .attr("cx", () => closestPoint.x)
-                    .attr("cy", () => closestPoint.y);
+                circlesRef.current.nodes().forEach((circle: any, i: number) => {
+                    if (i === closestLineIndex) {
+                        d3.select(circle)
+                            .attr("opacity", 1)
+                            .attr("cx", () => closestPoint.x)
+                            .attr("cy", () => closestPoint.y);
+                    } else {
+                        d3.select(circle)
+                            .attr("opacity", 0); // hide other circles
+                    }
+                });
             }
         });
     }

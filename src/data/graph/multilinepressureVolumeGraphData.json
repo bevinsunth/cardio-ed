@@ -1,6 +1,6 @@
 [
   {
-    "label": "Pressure Loop",
+    "label": "Pressure Loop - Bottom",
     "coordinates": [
       {
         "x": 230,
@@ -13,7 +13,27 @@
       {
         "x": 609,
         "y": 562
+      }
+    ],
+    "color": "rgba(255, 99, 132, 1)"
+  },
+  {
+    "label": "Pressure Loop - Right",
+    "coordinates": [
+      {
+        "x": 609,
+        "y": 562
       },
+      {
+        "x": 609,
+        "y": 296
+      }
+    ],
+    "color": "rgba(255, 99, 132, 1)"
+  },
+  {
+    "label": "Pressure Loop - Top",
+    "coordinates": [
       {
         "x": 609,
         "y": 296
@@ -23,7 +43,17 @@
         "y": 112
       },
       {
-        "x": 232,
+        "x": 230,
+        "y": 225
+      }
+    ],
+    "color": "rgba(255, 99, 132, 1)"
+  },
+  {
+    "label": "Pressure Loop - Right",
+    "coordinates": [
+      {
+        "x": 230,
         "y": 225
       },
       {
