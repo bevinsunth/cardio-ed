@@ -103,7 +103,7 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
     function handleCircles(pointer: [number, number]) {
 
         let minDist = 50; // initialize minimum distance to trigger hover
-        let closestPoint: 0; // initialize closest point
+        let closestPoint: {x: number, y: number}; // initialize closest point
         let closestLineIndex: number; // initialize index of the closest line
         let lastClosestLineDistance = Infinity; // initialize index of the closest line
 
