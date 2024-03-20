@@ -99,7 +99,10 @@
       {"x": 442.6, "y": 228.1},
       {"x": 453.5, "y": 228.5}
     ],
-    "color": "#808080"
+    "color": "#808080",
+    "lableYOffset": -10,
+    "lineSize": 1.2,
+    "circleSize": 3
   },
   {
     "label": "Ventricular Volume",
@@ -204,7 +207,9 @@
 {"x": 420.7317073170732, "y": 139.9390243902439},
 {"x": 150.91463414634148, "y": 159.14634146341464}
     ],
-    "color": "rgba(0, 123, 255, 1)"
+    "color": "#808080",
+    "lineSize": 1.2,
+    "circleSize": 3
   },
   {
     "label": "Electocardiogram",
