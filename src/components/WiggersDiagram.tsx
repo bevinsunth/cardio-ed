@@ -27,7 +27,7 @@ const width = maxXValue
 const biggestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => b - a)[0];
 
 let xScale = d3.scaleLinear()
-    .domain([biggestFirstX, maxXValue])
+    .domain([0, maxXValue])
     .range([0, width])
 
 let yScale = d3.scaleLinear()
@@ -35,7 +35,7 @@ let yScale = d3.scaleLinear()
     .range([0, height])
 
 
-const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer:any, setWiggersDiagramPointer:(value: any) => void }> = ({pressureVolumeLoopPointer, setWiggersDiagramPointer}) => {
+const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer: any, setWiggersDiagramPointer: (value: any) => void }> = ({ pressureVolumeLoopPointer, setWiggersDiagramPointer }) => {
     const ref = useRef<SVGSVGElement | null>(null);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
@@ -100,35 +100,39 @@ const WiggersDiagram: React.FC<{ pressureVolumeLoopPointer:any, setWiggersDiagra
         }
     }, [pressureVolumeLoopPointer]);
 
+
+
     function handleCircles(pointer: [number, number]) {
-        let mouseX = pointer[0];
+        let targetX = pointer[0];
 
         linesRef.current.nodes().forEach((_lineNode: any, i: any) => {
-            var pathEl = _lineNode;
-            var pathLength = pathEl.getTotalLength();
-            var beginning = mouseX, end = pathLength, target, pos: DOMPoint;
 
-            while (true) {
-                target = Math.floor((beginning + end) / 2);
-                pos = pathEl.getPointAtLength(target);
-                if ((target === end || target === beginning) && Math.floor(pos.x) !== mouseX) {
-                    break;
-                }
-                if (Math.floor(pos.x) > mouseX) {
-                    end = target;
-                } else if (Math.floor(pos.x) < mouseX) {
-                    beginning = target;
+            let precision = 1
+            let startLength = 0;
+            let endLength = _lineNode.getTotalLength();
+            let point = _lineNode.getPointAtLength((startLength + endLength) / 2);
+            let iterations = 0;
+
+            // Increase precision for a closer match. Decrease it for faster, but less precise results.
+            precision = precision || 0.1;
+
+            // Binary search for a point with the given x coordinate within the specified precision
+            while (Math.abs(point.x - targetX) > precision && iterations < 100) {
+                if (point.x < targetX) {
+                    startLength = (startLength + endLength) / 2;
                 } else {
-                    break; //position found
+                    endLength = (startLength + endLength) / 2;
                 }
+                point = _lineNode.getPointAtLength((startLength + endLength) / 2);
+                iterations++;
             }
 
-            circlesRef.current.filter(function (_circle:any, index:number) {
+            circlesRef.current.filter(function (_circle: any, index: number) {
                 return i == index;
             })
                 .attr("opacity", 1)
-                .attr("cx", () => mouseX)
-                .attr("cy", () => pos.y);
+                .attr("cx", () => point.x)
+                .attr("cy", () => point.y);
         });
     }
 
