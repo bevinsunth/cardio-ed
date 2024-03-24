@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
-import multilineGraphData from '@/data/graph/multilinewiggersGraphData.json';
+import graphData from '@/data/graph/multilinewiggersGraphData.json';
 
 type Coordinate = {
     x: number;
@@ -8,14 +8,22 @@ type Coordinate = {
 };
 
 type GraphData = {
-    label: string;
-    coordinates: Coordinate[];
-    color: string;
-    lableYOffset: number;
-    lineSize: number;
-    circleSize: number;
-}[];
+    lines: {
+        label: string;
+        coordinates: Coordinate[];
+        color: string;
+        lableYOffset: number;
+        lineSize: number;
+        circleSize: number;
+    }[];
+    sections: {
+        code: string;
+        startXCoordinates: number;
+        endXCoordinates: number;
+    }
+};
 
+const multilineGraphData = graphData.lines;
 let maxXValue = findMaxX(multilineGraphData);
 let maxYValue = findMaxY(multilineGraphData);
 const height = maxYValue

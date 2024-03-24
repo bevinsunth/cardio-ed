@@ -1,5 +1,6 @@
 [
   {
+    "code": "VF",
     "label": "Pressure Loop - Bottom",
     "coordinates": [
       {
@@ -18,6 +19,7 @@
     "color": "rgba(255, 99, 132, 1)"
   },
   {
+    "code": "IC",
     "label": "Pressure Loop - Right",
     "coordinates": [
       {
@@ -32,6 +34,7 @@
     "color": "rgba(255, 99, 132, 1)"
   },
   {
+    "code": "VE",
     "label": "Pressure Loop - Top",
     "coordinates": [
       {
@@ -50,7 +53,8 @@
     "color": "rgba(255, 99, 132, 1)"
   },
   {
-    "label": "Pressure Loop - Right",
+    "code": "IR",
+    "label": "Pressure Loop - Left",
     "coordinates": [
       {
         "x": 230,
