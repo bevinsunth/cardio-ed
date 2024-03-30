@@ -1,31 +1,29 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
-import multilineGraphData from '@/data/graph/multilinepressureVolumeGraphData.json';
+import { quadtree } from 'd3';
+import pressureVolumeGraphDataJson from '@/data/graph/multilinepressureVolumeGraphData.json';
+import wiggersGraphDataJson from '@/data/graph/multilinewiggersGraphData.json';
+import * as interfaces from '@/models/interfaces';
+import * as graphDataHelper from '@/utils/graphDataHelper';
 
-type Coordinate = {
-    x: number;
-    y: number;
-};
 
-type GraphData = {
-    label: string;
-    coordinates: Coordinate[];
-    color: string;
-}[];
+
+const wiggersGraphData: interfaces.WiggersGraphData = wiggersGraphDataJson;
+const pressureVolumeGraphData: interfaces.BaseLineData[] = pressureVolumeGraphDataJson;
 
 
 // // Define your margins
 // const margin = { top: 10, right: 50, bottom: 30, left: 40 };
 
-let maxXValue = findMaxX(multilineGraphData);
-let maxYValue = findMaxY(multilineGraphData);
+let maxXValue = findMaxX(pressureVolumeGraphData);
+let maxYValue = findMaxY(pressureVolumeGraphData);
 const height = 490;
 const width = 500;
 
-// const smallestFirstX = multilineGraphData.map(line => line.coordinates[0].x).sort((a, b) => a - b)[0];
+// const smallestFirstX = pressureVolumeGraphData.map(line => line.coordinates[0].x).sort((a, b) => a - b)[0];
 
 let xScale = d3.scaleLinear()
-    .domain([0 , maxXValue])
+    .domain([0, maxXValue])
     .range([0, width])
 
 let yScale = d3.scaleLinear()
@@ -33,7 +31,7 @@ let yScale = d3.scaleLinear()
     .range([0, height])
 
 
-const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoopPointer: (value: any) => void }> = ({ wiggersDiagramPointer, setPressureLoopPointer }) => {
+const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.WiggersActivePointerData, setPressureVolumeActivePointerData: (value: interfaces.PressureVolumeActivePointerData) => void }> = ({ wiggersActivePointerData, setPressureVolumeActivePointerData }) => {
     const ref = useRef<SVGSVGElement | null>(null);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
@@ -45,16 +43,16 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
             .attr("height", height + 30)
 
         // Define line generator
-        const line = d3.line<Coordinate>()
+        const line = d3.line<interfaces.Coordinate>()
             .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
             .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
             .curve(d3.curveMonotoneX)
 
         var lineGroup = svg.append("g")
-            //.attr("transform", "translate(" + 0 + "," + 0 + ")");
+        //.attr("transform", "translate(" + 0 + "," + 0 + ")");
 
         linesRef.current = lineGroup.selectAll(".gLine")
-            .data(multilineGraphData)
+            .data(pressureVolumeGraphData)
             .enter()
             .append("path")
             .attr("class", "gLine")
@@ -62,13 +60,13 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
                 return line(d.coordinates);
             })
             .attr("stroke", function (d, i) {
-                return multilineGraphData[i].color;
+                return pressureVolumeGraphData[i].color;
             })
             .attr("fill", "transparent")
             .attr("stroke-width", "2px");
 
         circlesRef.current = lineGroup.selectAll("circle")
-            .data(multilineGraphData)
+            .data(pressureVolumeGraphData)
             .enter()
             .append("circle")
             .attr("d", function (d) {
@@ -77,7 +75,7 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
             .attr("r", 6)
             .attr("opacity", 0)
             .attr("fill", function (d, i) {
-                return multilineGraphData[i].color;
+                return pressureVolumeGraphData[i].color;
             });
 
 
@@ -85,57 +83,130 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
             ref.current.addEventListener("mousemove", function (d) {
                 let pointer = d3.pointer(d);
 
-                setPressureLoopPointer(pointer);
-                handleCircles(pointer);
-
+                let { closestPoint, closestLineCode } = getClosestPointer(pointer);
+                if (closestPoint && closestLineCode) {
+                    let activeNode = linesRef.current.nodes().find((node: any) => node.__data__.code === closestLineCode);
+                    drawCircleOnLine(closestPoint, closestLineCode);
+                    let activeLineLength = activeNode.getTotalLength();
+                    let pointOnActiveLine = getLengthAtPoint(activeNode, pointer[0], pointer[1]);
+                    setPressureVolumeActivePointerData({
+                        activeLineCode: closestLineCode,
+                        activeLineLength: activeLineLength,
+                        pointOnActiveLine: pointOnActiveLine,
+                        activePointer: [pointer[0], pointer[1]]
+                    });
+                }
             });
         }
 
     }, [ref]);
 
     useEffect(() => {
-        if (wiggersDiagramPointer) {
-            handleCircles(wiggersDiagramPointer);
+        if (wiggersActivePointerData && wiggersActivePointerData.activePointer && wiggersActivePointerData.activeSectionCode && wiggersActivePointerData.activePointer.length > 0) {
+            const wiggerSection = wiggersGraphData.sections.find(section => section.code === wiggersActivePointerData.activeSectionCode);
+            const pressureLoopNode = linesRef.current.nodes().find((node: any) => node.__data__.code === wiggersActivePointerData.activeSectionCode);
+            const targetLength = pressureLoopNode ? pressureLoopNode.getTotalLength() : 0;
+            const sourceLength = wiggerSection ? wiggerSection.endXCoordinates - wiggerSection.startXCoordinates : maxXValue;
+
+            if (wiggerSection === undefined || pressureLoopNode === undefined) return;
+
+            const sourceLinePoint = wiggersActivePointerData.activePointer[0] - wiggerSection.startXCoordinates;
+            let targetLinePoint = graphDataHelper.mapLinePointToTargetLine(sourceLength, targetLength, sourceLinePoint);
+            let selectedPoint = pressureLoopNode.getPointAtLength(targetLinePoint);
+            drawCircleOnLine(selectedPoint, pressureLoopNode.__data__.code);
         }
-    }, [wiggersDiagramPointer]);
+    }, [wiggersActivePointerData]);
+
+    function getLengthAtPoint(pathNode:any, x: number, y: number) {
+        let pathLength = pathNode.getTotalLength();
+        let precision = 1;
+        let bestLength = 0;
+        let bestDistance = Infinity;
+      
+        for (let i = 0; i <= pathLength; i += precision) {
+          let point = pathNode.getPointAtLength(i);
+          let distance = Math.hypot(point.x - x, point.y - y);
+      
+          if (distance < bestDistance) {
+            bestLength = i;
+            bestDistance = distance;
+          }
+        }
+      
+        return bestLength;
+      }
 
 
-    function handleCircles(pointer: [number, number]) {
+    function getClosestPointer(pointer: [number, number]) {
 
         let minDist = 50; // initialize minimum distance to trigger hover
-        let closestPoint: {x: number, y: number}; // initialize closest point
-        let closestLineIndex: number; // initialize index of the closest line
+        let closestPoint: { x: number, y: number } | null = null; // initialize closest point
+        let closestLineCode: string | null = null; // initialize index of the closest line
         let lastClosestLineDistance = Infinity; // initialize index of the closest line
 
+        let closestNodeCode = findClosestNodes({ x: pointer[0], y: pointer[1] }, pressureVolumeGraphData);
+
         linesRef.current.nodes().forEach((_lineNode: any, i: any) => {
+
+            if (!closestNodeCode || !closestNodeCode.includes(_lineNode.__data__.code)) return;
+
             var pathEl = _lineNode;
             var pathLength = pathEl.getTotalLength();
 
-            for (let p = 0; p < pathLength; p++) {
+            let interval = 1; // Adjust this value to trade off between speed and accuracy
+
+            for (let p = 0; p < pathLength; p += interval) {
                 let point = pathEl.getPointAtLength(p);
                 let dist = Math.sqrt(Math.pow(point.x - pointer[0], 2) + Math.pow(point.y - pointer[1], 2));
                 if (dist < minDist && dist < lastClosestLineDistance) {
                     minDist = dist;
                     closestPoint = point;
-                    closestLineIndex = i;
+                    closestLineCode = _lineNode.__data__.code;
                     lastClosestLineDistance = dist;
                 }
             }
 
-            if (closestPoint) {
-                circlesRef.current.nodes().forEach((circle: any, i: number) => {
-                    if (i === closestLineIndex) {
-                        d3.select(circle)
-                            .attr("opacity", 1)
-                            .attr("cx", () => closestPoint.x)
-                            .attr("cy", () => closestPoint.y);
-                    } else {
-                        d3.select(circle)
-                            .attr("opacity", 0); // hide other circles
-                    }
-                });
-            }
         });
+        return { closestPoint, closestLineCode  };
+    }
+
+    function drawCircleOnLine(pointer: { x: number, y: number }, lineCode: string) {
+        if (pointer) {
+            circlesRef.current.nodes().forEach((_circle: any, i: number) => {
+                if (_circle.__data__.code === lineCode) {
+                    d3.select(_circle)
+                        .attr("opacity", 1)
+                        .attr("cx", () => pointer.x)
+                        .attr("cy", () => pointer.y);
+                } else {
+                    d3.select(_circle)
+                        .attr("opacity", 0); // hide other circles
+                }
+            });
+        }
+
+    }
+
+    function findClosestNodes(pointer: { x: number, y: number }, lines: interfaces.BaseLineData[]) {
+        // Flatten the path data and associate each point with its path
+        let points = lines.flatMap((line) => line.coordinates.map(point => ({ x: point.x, y: point.y, code: line.code })));
+
+        // Create the quadtree
+        let tree = quadtree()
+            .x(d => d[0])
+            .y(d => d[1])
+            .addAll(points.map(point => [point.x, point.y]));
+
+        // Find the closest point
+        let closestPoint = tree.find(pointer.x, pointer.y);
+
+        let matchingPoints = points.filter(point => point.x === (closestPoint as [number, number])[0] && point.y === (closestPoint as [number, number])[1]);
+        if (matchingPoints.length > 0) {
+            return matchingPoints.flatMap(point => point.code);
+        }
+        else {
+            return null;
+        }
     }
 
 
@@ -145,26 +216,12 @@ const PressureVolumeLoop: React.FC<{ wiggersDiagramPointer: any, setPressureLoop
 
 
 function findMaxX(data: any[]) {
-    return Math.max(...multilineGraphData.flatMap(line => line.coordinates.map(point => point.x)));
+    return Math.max(...pressureVolumeGraphData.flatMap(line => line.coordinates.map(point => point.x)));
 }
 
 function findMaxY(data: any[]) {
-    return Math.max(...multilineGraphData.flatMap(line => line.coordinates.map(point => point.y)));
+    return Math.max(...pressureVolumeGraphData.flatMap(line => line.coordinates.map(point => point.y)));
 }
-
-
-// function getAllPathCoordinates(path: SVGPathElement | null, pathLength: number) {
-//     let coordinates: { x: number, y: number }[] = [];
-//     for (let i = 0; i <= pathLength; i++) {
-//         let pos = path?.getPointAtLength(i);
-//         if (pos) {
-//             if (!coordinates.some(coord => coord.x === Math.floor(pos?.x!))) {
-//                 coordinates.push({ x: Math.floor(pos?.x!), y: Math.floor(pos?.y!) });
-//             }
-//         }
-//     }
-//     return coordinates;
-// }
 
 
 export default PressureVolumeLoop;

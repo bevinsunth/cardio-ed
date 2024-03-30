@@ -1,21 +1,32 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import * as interfaces from '@/models/interfaces';
 
 export const components = {
   pressureVolumeLoop: dynamic(() => import("@/components/PressureVolumeLoop"), {ssr: false}),
-  multilineLineGraph: dynamic(() => import("@/components/WiggersDiagram"), {ssr: false}),
+  wiggersDiagram: dynamic(() => import("@/components/WiggersDiagram"), {ssr: false}),
 };
 
 
 const Home: React.FC = () => {
-  const [pressureVolumeLoopPointer, setPressureLoopPointer] = useState(null);
-  const [wiggersDiagramPointer, setWiggersDiagramPointer] = useState(null);
+  const [pressureVolumeActivePointerData , setPressureVolumeActivePointerData] = useState<interfaces.PressureVolumeActivePointerData|null>(null);
+  const [wiggersActivePointerData, setWiggersActivePointerData] = useState<interfaces.WiggersActivePointerData| null>(null);
+
+  const pressureLoopProps = {
+    wiggersActivePointerData: wiggersActivePointerData,
+    setPressureVolumeActivePointerData: setPressureVolumeActivePointerData,
+  };
+
+  const wiggersDiagramProps = {
+    pressureVolumeActivePointerData: pressureVolumeActivePointerData,
+    setWiggersActivePointerData: setWiggersActivePointerData,
+  };
 
   return (
     <>
-      <components.pressureVolumeLoop wiggersDiagramPointer={wiggersDiagramPointer}  setPressureLoopPointer={setPressureLoopPointer}/>
+      <components.pressureVolumeLoop {...pressureLoopProps}/>
       <br/>
-      <components.multilineLineGraph pressureVolumeLoopPointer={pressureVolumeLoopPointer} setWiggersDiagramPointer={setWiggersDiagramPointer} />
+      <components.wiggersDiagram {...wiggersDiagramProps}/>
     </>
   );
 };

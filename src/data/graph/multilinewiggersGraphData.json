@@ -1004,22 +1004,22 @@
       "endXCoordinates": 151
     },
     {
-      "code": "E",
-      "name": "Ejection",
+      "code": "VE",
+      "name": "Vetricular Ejection",
       "startXCoordinates": 151,
       "endXCoordinates": 214
     },
     {
       "code": "IR",
       "name": "Isovolumetric Relactation",
-      "start": 151,
-      "end": 224
+      "startXCoordinates": 151,
+      "endXCoordinates": 224
     },
     {
       "code": "VF",
       "name": "Vetricular Filling",
-      "start": 151,
-      "end": 224
+      "startXCoordinates": 224,
+      "endXCoordinates": 347
     }
   ]
 }
