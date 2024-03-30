@@ -33,6 +33,7 @@ let yScale = d3.scaleLinear()
 
 const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.WiggersActivePointerData, setPressureVolumeActivePointerData: (value: interfaces.PressureVolumeActivePointerData) => void }> = ({ wiggersActivePointerData, setPressureVolumeActivePointerData }) => {
     const ref = useRef<SVGSVGElement | null>(null);
+    const linesCacheRef = useRef<interfaces.LineCache[]>([]);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
 
@@ -64,6 +65,26 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             })
             .attr("fill", "transparent")
             .attr("stroke-width", "2px");
+
+            if (linesRef.current) {
+                linesRef.current.nodes().forEach((lineNode: any, index:number) => {
+                    let pathLength = lineNode.getTotalLength();
+                    let precision = 1;
+                    let lineCoordinates = [];
+
+                    for (let i = 0; i <= pathLength; i += precision) {
+                        let point = lineNode.getPointAtLength(i);
+                        point.x = Math.floor(point.x);
+                        point.y = Math.floor(point.y);
+                        lineCoordinates.push(point);
+                    }
+
+                    linesCacheRef.current[index] = {
+                        code: lineNode.__data__.code,
+                        coordinates: lineCoordinates
+                      };
+                });
+            }
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(pressureVolumeGraphData)
@@ -150,21 +171,37 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
 
             if (!closestNodeCode || !closestNodeCode.includes(_lineNode.__data__.code)) return;
 
+            let lineCache = linesCacheRef.current.find(line => line.code === _lineNode.__data__.code);
+            if (!lineCache) return; 
+
             var pathEl = _lineNode;
             var pathLength = pathEl.getTotalLength();
 
             let interval = 1; // Adjust this value to trade off between speed and accuracy
 
-            for (let p = 0; p < pathLength; p += interval) {
-                let point = pathEl.getPointAtLength(p);
+
+
+            // for (let p = 0; p < pathLength; p += interval) {
+            //     let point = pathEl.getPointAtLength(p);
+            //     let dist = Math.sqrt(Math.pow(point.x - pointer[0], 2) + Math.pow(point.y - pointer[1], 2));
+            //     if (dist < minDist && dist < lastClosestLineDistance) {
+            //         minDist = dist;
+            //         closestPoint = point;
+            //         closestLineCode = _lineNode.__data__.code;
+            //         lastClosestLineDistance = dist;
+            //     }
+            // }
+
+            for (let p = 0; p < lineCache.coordinates.length; p++) {
+                let point = lineCache.coordinates[p];
                 let dist = Math.sqrt(Math.pow(point.x - pointer[0], 2) + Math.pow(point.y - pointer[1], 2));
                 if (dist < minDist && dist < lastClosestLineDistance) {
-                    minDist = dist;
-                    closestPoint = point;
-                    closestLineCode = _lineNode.__data__.code;
-                    lastClosestLineDistance = dist;
+                  minDist = dist;
+                  closestPoint = point;
+                  closestLineCode = lineCache.code;
+                  lastClosestLineDistance = dist;
                 }
-            }
+              }
 
         });
         return { closestPoint, closestLineCode  };

@@ -28,6 +28,7 @@ let yScale = d3.scaleLinear()
 
 const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.PressureVolumeActivePointerData, setWiggersActivePointerData: (value: interfaces.WiggersActivePointerData) => void }> = ({ pressureVolumeActivePointerData, setWiggersActivePointerData }) => {
     const ref = useRef<SVGSVGElement | null>(null);
+    const linesCacheRef = useRef<interfaces.LineCache[]>([]);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
 
@@ -59,6 +60,26 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .attr("stroke-width", function (d) {
                 return d.lineSize !== undefined ? d.lineSize : 2;
             });
+
+            if (linesRef.current) {
+                linesRef.current.nodes().forEach((lineNode: any, index:number) => {
+                    let pathLength = lineNode.getTotalLength();
+                    let precision = 1;
+                    let lineCoordinates = [];
+
+                    for (let i = 0; i <= pathLength; i += precision) {
+                        let point = lineNode.getPointAtLength(i);
+                        point.x = Math.floor(point.x);
+                        point.y = Math.floor(point.y);
+                        lineCoordinates.push(point);
+                    }
+
+                    linesCacheRef.current[index] = {
+                        code: lineNode.__data__.code,
+                        coordinates: lineCoordinates
+                      };
+                });
+            }
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(wiggersGraphData.lines)
@@ -154,35 +175,56 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             //     iterations++;
             // }
 
-            let intersection = findYIntersectionPoint(_lineNode, targetX);
+            let intersection : interfaces.Coordinate | null = findYIntersectionPoint(_lineNode.__data__.code, targetX);
             if (!intersection) return;
 
             circlesRef.current.filter(function (_circle: any, index: number) {
                 return i == index;
             })
                 .attr("opacity", 1)
-                .attr("cx", () => intersection.x)
-                .attr("cy", () => intersection.y);
+                .attr("cx", () => intersection?.x)
+                .attr("cy", () => intersection?.y);
         });
     }
+
+    function findYIntersectionPoint(lineCode: string, x: number) {
+        x = xScale(x);
+        const line = linesCacheRef.current.find(line => line.code === lineCode);
+      
+        if (!line) {
+          return null;
+        }
+      
+        line.coordinates.sort((a, b) => a.x - b.x);
+      
+        let closestPoint = line.coordinates[0];
+        for (let i = 1; i < line.coordinates.length; i++) {
+          if (line.coordinates[i].x > x) {
+            break;
+          }
+          closestPoint = line.coordinates[i];
+        }
+      
+        return closestPoint;
+      }
 
     return <svg ref={ref} />;
 };
 
-function findYIntersectionPoint(pathNode: any, x: number) {
-    let pathLength = pathNode.getTotalLength();
-    let precision = 1;
-  
-    for (let i = 0; i <= pathLength; i += precision) {
-      let point = pathNode.getPointAtLength(i);
-  
-      if (Math.abs(point.x - x) < precision) {
-        return point;
-      }
-    }
-    return null;
-  }
 
+// function findYIntersectionPoint(pathNode: any, x: number) {
+//     let pathLength = pathNode.getTotalLength();
+//     let precision = 1;
+  
+//     for (let i = 0; i <= pathLength; i += precision) {
+//       let point = pathNode.getPointAtLength(i);
+  
+//       if (Math.abs(point.x - x) < precision) {
+//         return point;
+//       }
+//     }
+//     return null;
+//   }
 
 function findMaxX(data: any[]) {
     return Math.max(...wiggersGraphData.lines.flatMap(line => line.coordinates.map(point => point.x)));

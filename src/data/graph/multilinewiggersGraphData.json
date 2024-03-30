@@ -1,6 +1,7 @@
 {
   "lines": [
     {
+      "code": "VP",
       "label": "Vetricular Pressure",
       "coordinates": [
         {
@@ -235,6 +236,7 @@
       "color": "rgba(255, 99, 132, 1)"
     },
     {
+      "code": "AP",
       "label": "Atrial Pressure",
       "coordinates": [
         {
@@ -376,6 +378,7 @@
       "circleSize": 3
     },
     {
+      "code": "VV",
       "label": "Ventricular Volume",
       "coordinates": [
         {
@@ -662,6 +665,7 @@
       "color": "rgba(0, 123, 255, 1)"
     },
     {
+      "code": "AV",
       "label": "Aeortic Pressure",
       "coordinates": [
         {
@@ -762,6 +766,7 @@
       "circleSize": 3
     },
     {
+      "code": "EV",
       "label": "Electocardiogram",
       "coordinates": [
         {

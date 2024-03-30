@@ -4,7 +4,7 @@ export interface Coordinate {
 }
 
 export interface BaseLineData  {
-    code?: string;
+    code: string;
     label: string;
     coordinates: Coordinate[];
     color: string;
@@ -41,4 +41,9 @@ export interface WiggersActivePointerData {
 }
 
 export type Pointer = [number, number];
+
+export type LineCache = {
+    code: string;
+    coordinates: Coordinate[];
+  };
 
