@@ -21,6 +21,7 @@ export interface Section {
     name: string;
     startXCoordinates: number;
     endXCoordinates: number;
+    color: string;
 }
 
 export interface WiggersGraphData {

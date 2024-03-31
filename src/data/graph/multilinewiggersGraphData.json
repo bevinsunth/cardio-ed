@@ -1006,25 +1006,29 @@
       "code": "IC",
       "name": "Isovolumetric Contraction",
       "startXCoordinates": 140,
-      "endXCoordinates": 151
+      "endXCoordinates": 151,
+      "color":"rgba(0, 123, 255, 1)"
     },
     {
       "code": "VE",
       "name": "Vetricular Ejection",
       "startXCoordinates": 151,
-      "endXCoordinates": 214
+      "endXCoordinates": 214,
+      "color":"rgba(0, 123, 255, 1)"
     },
     {
       "code": "IR",
       "name": "Isovolumetric Relactation",
-      "startXCoordinates": 151,
-      "endXCoordinates": 224
+      "startXCoordinates": 214,
+      "endXCoordinates": 224,
+      "color":"rgba(0, 123, 255, 1)"
     },
     {
       "code": "VF",
       "name": "Vetricular Filling",
       "startXCoordinates": 224,
-      "endXCoordinates": 347
+      "endXCoordinates": 347,
+      "color":"rgba(0, 123, 255, 1)"
     }
   ]
 }

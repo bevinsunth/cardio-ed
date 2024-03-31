@@ -9,7 +9,7 @@ export const components = {
 
 
 const Home: React.FC = () => {
-  const [pressureVolumeActivePointerData, setPressureVolumeActivePointerData] = useState<interfaces.PressureVolumeActivePointerData | null>(null);
+  const [pressureVolumeActivePointerData, setPressureVolumeActivePointerData] = useState<interfaces.PressureVolumeActivePointerData| null>(null);
   const [wiggersActivePointerData, setWiggersActivePointerData] = useState<interfaces.WiggersActivePointerData | null>(null);
 
   const pressureLoopProps = {
@@ -24,7 +24,7 @@ const Home: React.FC = () => {
 
   return (
     <>
-<div style={{ display: "flex", justifyContent: "center" }}>
+<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
   <components.pressureVolumeLoop {...pressureLoopProps} />
   <components.wiggersDiagram {...wiggersDiagramProps} />
 </div>

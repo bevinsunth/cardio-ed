@@ -31,7 +31,7 @@ let yScale = d3.scaleLinear()
     .range([0, height])
 
 
-const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.WiggersActivePointerData, setPressureVolumeActivePointerData: (value: interfaces.PressureVolumeActivePointerData) => void }> = ({ wiggersActivePointerData, setPressureVolumeActivePointerData }) => {
+const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.WiggersActivePointerData | null, setPressureVolumeActivePointerData: (value: interfaces.PressureVolumeActivePointerData) => void }> = ({ wiggersActivePointerData, setPressureVolumeActivePointerData }) => {
     const ref = useRef<SVGSVGElement | null>(null);
     const linesCacheRef = useRef<interfaces.LineCache[]>([]);
     const linesRef = useRef<any>(null);
