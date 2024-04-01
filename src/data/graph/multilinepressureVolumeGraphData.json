@@ -1,7 +1,7 @@
 [
   {
     "code": "VF",
-    "label": "Pressure Loop - Bottom",
+    "label": "Vetricular Filling",
     "coordinates": [
       {
         "x": 230,
@@ -20,7 +20,7 @@
   },
   {
     "code": "IC",
-    "label": "Pressure Loop - Right",
+    "label": "Isovolumetric Contraction",
     "coordinates": [
       {
         "x": 609,
@@ -35,7 +35,7 @@
   },
   {
     "code": "VE",
-    "label": "Pressure Loop - Top",
+    "label": "Ventricular Ejection",
     "coordinates": [
       {
         "x": 609,
@@ -54,7 +54,7 @@
   },
   {
     "code": "IR",
-    "label": "Pressure Loop - Left",
+    "label": "Isovolumetric Relaxation",
     "coordinates": [
       {
         "x": 230,

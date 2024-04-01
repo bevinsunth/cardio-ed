@@ -17,6 +17,11 @@ const pressureVolumeGraphData: interfaces.BaseLineData[] = pressureVolumeGraphDa
 
 let maxXValue = findMaxX(pressureVolumeGraphData);
 let maxYValue = findMaxY(pressureVolumeGraphData);
+let minXValue = findMinX(pressureVolumeGraphData);
+let minYValue = findMinY(pressureVolumeGraphData);
+let midLoopXValue = ((maxXValue - minXValue) / 2) + minXValue;
+let midLoopYValue = ((maxYValue - minYValue) / 2) + minYValue;
+
 const height = 490;
 const width = 500;
 
@@ -85,6 +90,29 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
                       };
                 });
             }
+
+        // Define the arrow marker
+        svg.append('defs').append('marker')
+        .attr('id', 'arrow')
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 5)
+        .attr('refY', 0)
+        .attr('markerWidth', 6)
+        .attr('markerHeight', 6)
+        .attr('orient', 'auto-start-reverse')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('class', 'arrowHead');
+
+    svg.append('line')
+    .attr('x1', xScale(minXValue) + 10)
+    .attr('y1', yScale(midLoopYValue))
+    .attr('x2', xScale(maxXValue) - 10)
+    .attr('y2', yScale(midLoopYValue))
+    .attr('marker-start', 'url(#arrow)')
+    .attr('marker-end', 'url(#arrow)')
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2);
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(pressureVolumeGraphData)
@@ -258,6 +286,14 @@ function findMaxX(data: any[]) {
 
 function findMaxY(data: any[]) {
     return Math.max(...pressureVolumeGraphData.flatMap(line => line.coordinates.map(point => point.y)));
+}
+
+function findMinX(data: any[]) {
+    return Math.min(...pressureVolumeGraphData.flatMap(line => line.coordinates.map(point => point.x)));
+}
+
+function findMinY(data: any[]) {
+    return Math.min(...pressureVolumeGraphData.flatMap(line => line.coordinates.map(point => point.y)));
 }
 
 

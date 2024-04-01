@@ -205,10 +205,14 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         if (!overlaysRef.current) return;
 
         overlaysRef.current.filter(function (_overlay: any, index: number) {
-            return index;
+            return true;
         }).attr("fill", "transparent")
             .filter((section: unknown) => {
                 let s = section as interfaces.Section;
+                console.log('section:', s.code);
+                console.log('pointer:', pointer[0]);
+                console.log('startXCoordinates:', xScale(s.startXCoordinates));
+                console.log('endXCoordinates:', xScale(s.endXCoordinates));
                 return xScale(s.startXCoordinates) <= pointer[0] && pointer[0] <= xScale(s.endXCoordinates);
             })
             .attr("fill", (section: unknown) => {
