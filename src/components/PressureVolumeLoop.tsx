@@ -41,6 +41,7 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
     const linesCacheRef = useRef<interfaces.LineCache[]>([]);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
+    const activeLineCodeRef = useRef<string | null>(null);
 
     useEffect(() => {
 
@@ -71,48 +72,59 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             .attr("fill", "transparent")
             .attr("stroke-width", "2px");
 
-            if (linesRef.current) {
-                linesRef.current.nodes().forEach((lineNode: any, index:number) => {
-                    let pathLength = lineNode.getTotalLength();
-                    let precision = 1;
-                    let lineCoordinates = [];
 
-                    for (let i = 0; i <= pathLength; i += precision) {
-                        let point = lineNode.getPointAtLength(i);
-                        point.x = Math.floor(point.x);
-                        point.y = Math.floor(point.y);
-                        lineCoordinates.push(point);
-                    }
+        if (linesRef.current) {
 
-                    linesCacheRef.current[index] = {
-                        code: lineNode.__data__.code,
-                        coordinates: lineCoordinates
-                      };
-                });
-            }
+            linesRef.current.nodes().forEach((lineNode: any, index: number) => {
+                let pathLength = lineNode.getTotalLength();
+                let precision = 1;
+                let lineCoordinates = [];
+
+                for (let i = 0; i <= pathLength; i += precision) {
+                    let point = lineNode.getPointAtLength(i);
+                    point.x = Math.floor(point.x);
+                    point.y = Math.floor(point.y);
+                    lineCoordinates.push(point);
+                }
+
+                linesCacheRef.current[index] = {
+                    code: lineNode.__data__.code,
+                    coordinates: lineCoordinates
+                };
+
+
+                // Append a circle to the start coordinates of each line
+                let circle = svg.append("circle")
+                    .attr("cx", lineCoordinates[0].x)
+                    .attr("cy", lineCoordinates[0].y)
+                    .attr("r", 10) // radius of the circle
+                    .style("fill", "red"); // color of the circle
+
+            });
+        }
 
         // Define the arrow marker
         svg.append('defs').append('marker')
-        .attr('id', 'arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 5)
-        .attr('refY', 0)
-        .attr('markerWidth', 6)
-        .attr('markerHeight', 6)
-        .attr('orient', 'auto-start-reverse')
-        .append('path')
-        .attr('d', 'M0,-5L10,0L0,5')
-        .attr('class', 'arrowHead');
+            .attr('id', 'arrow')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 5)
+            .attr('refY', 0)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto-start-reverse')
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5')
+            .attr('class', 'arrowHead');
 
-    svg.append('line')
-    .attr('x1', xScale(minXValue) + 10)
-    .attr('y1', yScale(midLoopYValue))
-    .attr('x2', xScale(maxXValue) - 10)
-    .attr('y2', yScale(midLoopYValue))
-    .attr('marker-start', 'url(#arrow)')
-    .attr('marker-end', 'url(#arrow)')
-    .attr('stroke', 'black')
-    .attr('stroke-width', 2);
+        svg.append('line')
+            .attr('x1', xScale(minXValue) + 10)
+            .attr('y1', yScale(midLoopYValue))
+            .attr('x2', xScale(maxXValue) - 10)
+            .attr('y2', yScale(midLoopYValue))
+            .attr('marker-start', 'url(#arrow)')
+            .attr('marker-end', 'url(#arrow)')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 2);
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(pressureVolumeGraphData)
@@ -144,11 +156,25 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
                         pointOnActiveLine: pointOnActiveLine,
                         activePointer: [pointer[0], pointer[1]]
                     });
+                    if (activeLineCodeRef.current !== closestLineCode) {
+                        activeLineCodeRef.current = closestLineCode;
+                    }
                 }
             });
         }
 
     }, [ref]);
+
+
+    useEffect(() => {
+        if (activeLineCodeRef.current) {
+
+            let activeLine = pressureVolumeGraphData.find(line => line.code === activeLineCodeRef.current);
+            if (activeLine) {
+                //Update html here
+            }
+        }
+    }, [activeLineCodeRef.current]);
 
     useEffect(() => {
         if (wiggersActivePointerData && wiggersActivePointerData.activePointer && wiggersActivePointerData.activeSectionCode && wiggersActivePointerData.activePointer.length > 0) {
@@ -166,24 +192,24 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
         }
     }, [wiggersActivePointerData]);
 
-    function getLengthAtPoint(pathNode:any, x: number, y: number) {
+    function getLengthAtPoint(pathNode: any, x: number, y: number) {
         let pathLength = pathNode.getTotalLength();
         let precision = 1;
         let bestLength = 0;
         let bestDistance = Infinity;
-      
+
         for (let i = 0; i <= pathLength; i += precision) {
-          let point = pathNode.getPointAtLength(i);
-          let distance = Math.hypot(point.x - x, point.y - y);
-      
-          if (distance < bestDistance) {
-            bestLength = i;
-            bestDistance = distance;
-          }
+            let point = pathNode.getPointAtLength(i);
+            let distance = Math.hypot(point.x - x, point.y - y);
+
+            if (distance < bestDistance) {
+                bestLength = i;
+                bestDistance = distance;
+            }
         }
-      
+
         return bestLength;
-      }
+    }
 
 
     function getClosestPointer(pointer: [number, number]) {
@@ -200,7 +226,7 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             if (!closestNodeCode || !closestNodeCode.includes(_lineNode.__data__.code)) return;
 
             let lineCache = linesCacheRef.current.find(line => line.code === _lineNode.__data__.code);
-            if (!lineCache) return; 
+            if (!lineCache) return;
 
             var pathEl = _lineNode;
             var pathLength = pathEl.getTotalLength();
@@ -224,15 +250,15 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
                 let point = lineCache.coordinates[p];
                 let dist = Math.sqrt(Math.pow(point.x - pointer[0], 2) + Math.pow(point.y - pointer[1], 2));
                 if (dist < minDist && dist < lastClosestLineDistance) {
-                  minDist = dist;
-                  closestPoint = point;
-                  closestLineCode = lineCache.code;
-                  lastClosestLineDistance = dist;
+                    minDist = dist;
+                    closestPoint = point;
+                    closestLineCode = lineCache.code;
+                    lastClosestLineDistance = dist;
                 }
-              }
+            }
 
         });
-        return { closestPoint, closestLineCode  };
+        return { closestPoint, closestLineCode };
     }
 
     function drawCircleOnLine(pointer: { x: number, y: number }, lineCode: string) {
@@ -249,7 +275,6 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
                 }
             });
         }
-
     }
 
     function findClosestNodes(pointer: { x: number, y: number }, lines: interfaces.BaseLineData[]) {
@@ -276,7 +301,9 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
 
 
 
-    return <svg ref={ref} />;
+    return (
+            <svg ref={ref} />
+    );
 };
 
 
