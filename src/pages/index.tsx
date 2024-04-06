@@ -1,11 +1,11 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import * as interfaces from '@/models/interfaces';
+import * as interfaces from '@/components/Shared/types';
 
 export const components = {
-  noteAreaComponent: dynamic(() => import("@/components/NoteAreaComponent"), { ssr: false }),
-  pressureVolumeLoop: dynamic(() => import("@/components/PressureVolumeLoop"), { ssr: false }),
-  wiggersDiagram: dynamic(() => import("@/components/WiggersDiagram"), { ssr: false }),
+  notesAreaComponent: dynamic(() => import("@/components/notesArea/NotesArea"), { ssr: false }),
+  pressureVolumeLoop: dynamic(() => import("@/components/pressureVolumeLoop/PressureVolumeLoop"), { ssr: false }),
+  wiggersDiagram: dynamic(() => import("@/components/WiggersDiagram/wiggers-diagram"), { ssr: false }),
 };
 
 
@@ -23,12 +23,17 @@ const Home: React.FC = () => {
     setWiggersActivePointerData: setWiggersActivePointerData,
   };
 
+  const notesProps = {
+    activeLineCode: pressureVolumeActivePointerData?.activeLineCode ?? null,
+  };
+  console.log('notesProps recalculated', notesProps);
+
   return (
     <>
 
 <div style={{ display: 'flex' }}>
 <div  style={{ flex:1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <components.noteAreaComponent />
+    <components.notesAreaComponent {...notesProps}/>
   </div>
 <div style={{ flex: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
   <components.pressureVolumeLoop {...pressureLoopProps} />

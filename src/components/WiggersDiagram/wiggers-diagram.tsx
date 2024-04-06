@@ -1,8 +1,8 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
-import wiggersGraphDataJson from '@/data/graph/multilinewiggersGraphData.json';
+import wiggersGraphDataJson from '../shared/Data/wiggersDiagram.json';
 import * as graphDataHelper from '@/utils/graphDataHelper';
-import * as interfaces from '@/models/interfaces';
+import * as interfaces from '@/components/Shared/types';
 
 
 
@@ -168,27 +168,6 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         let targetX = pointer[0];
 
         linesRef.current.nodes().forEach((_lineNode: any, i: any) => {
-
-            // let precision = 1
-            // let startLength = 0;
-            // let endLength = _lineNode.getTotalLength();
-            // let point = _lineNode.getPointAtLength((startLength + endLength) / 2);
-            // let iterations = 0;
-
-            // // Increase precision for a closer match. Decrease it for faster, but less precise results.
-            // precision = precision || 0.1;
-
-            // // Binary search for a point with the given x coordinate within the specified precision
-            // while (Math.abs(point.x - targetX) > precision && iterations < 100) {
-            //     if (point.x < targetX) {
-            //         startLength = (startLength + endLength) / 2;
-            //     } else {
-            //         endLength = (startLength + endLength) / 2;
-            //     }
-            //     point = _lineNode.getPointAtLength((startLength + endLength) / 2);
-            //     iterations++;
-            // }
-
             let intersection: interfaces.Coordinate | null = findYIntersectionPoint(_lineNode.__data__.code, targetX);
             if (!intersection) return;
 
@@ -209,10 +188,6 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         }).attr("fill", "transparent")
             .filter((section: unknown) => {
                 let s = section as interfaces.Section;
-                console.log('section:', s.code);
-                console.log('pointer:', pointer[0]);
-                console.log('startXCoordinates:', xScale(s.startXCoordinates));
-                console.log('endXCoordinates:', xScale(s.endXCoordinates));
                 return xScale(s.startXCoordinates) <= pointer[0] && pointer[0] <= xScale(s.endXCoordinates);
             })
             .attr("fill", (section: unknown) => {

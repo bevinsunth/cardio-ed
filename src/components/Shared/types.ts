@@ -1,3 +1,6 @@
+import { html } from "d3";
+import { title } from "process";
+
 export interface Coordinate {
     x: number;
     y: number;
@@ -47,4 +50,11 @@ export type LineCache = {
     code: string;
     coordinates: Coordinate[];
   };
+
+export interface Note {
+    code: string;
+    title: string;
+    notesHtml: string;
+    imageUrl: string;
+}
 

@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
 import { quadtree } from 'd3';
-import pressureVolumeGraphDataJson from '@/data/graph/multilinepressureVolumeGraphData.json';
-import wiggersGraphDataJson from '@/data/graph/multilinewiggersGraphData.json';
-import * as interfaces from '@/models/interfaces';
+import pressureVolumeGraphDataJson from '../shared/data/pressureVolumeLoop.json';
+import wiggersGraphDataJson from '../shared/Data/wiggersDiagram.json';
+import * as interfaces from '@/components/Shared/types';
 import * as graphDataHelper from '@/utils/graphDataHelper';
 
 
