@@ -167,16 +167,6 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
 
 
     useEffect(() => {
-        if (activeLineCodeRef.current) {
-
-            let activeLine = pressureVolumeGraphData.find(line => line.code === activeLineCodeRef.current);
-            if (activeLine) {
-                //Update html here
-            }
-        }
-    }, [activeLineCodeRef.current]);
-
-    useEffect(() => {
         if (wiggersActivePointerData && wiggersActivePointerData.activePointer && wiggersActivePointerData.activeSectionCode && wiggersActivePointerData.activePointer.length > 0) {
             const wiggerSection = wiggersGraphData.sections.find(section => section.code === wiggersActivePointerData.activeSectionCode);
             const pressureLoopNode = linesRef.current.nodes().find((node: any) => node.__data__.code === wiggersActivePointerData.activeSectionCode);
@@ -189,6 +179,13 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             let targetLinePoint = graphDataHelper.mapLinePointToTargetLine(sourceLength, targetLength, sourceLinePoint);
             let selectedPoint = pressureLoopNode.getPointAtLength(targetLinePoint);
             drawCircleOnLine(selectedPoint, pressureLoopNode.__data__.code);
+
+            setPressureVolumeActivePointerData({
+                activeLineCode: pressureLoopNode.__data__.code,
+                activeLineLength: targetLength,
+                pointOnActiveLine: targetLinePoint,
+                activePointer: selectedPoint ? [selectedPoint.x, selectedPoint.y] : [0, 0]
+            });
         }
     }, [wiggersActivePointerData]);
 
@@ -302,7 +299,7 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
 
 
     return (
-            <svg ref={ref} />
+        <svg ref={ref} />
     );
 };
 

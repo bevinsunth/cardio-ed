@@ -37,12 +37,14 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .attr("width", width + 150)
             .attr("height", height)
 
+            
+
 
         // Define line generator
         const line = d3.line<interfaces.Coordinate>()
             .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
             .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
-            .curve(d3.curveCardinal)
+            .curve(d3.curveBasis); // Apply smoothing to the line
 
         let sectionGroup = svg.append("g");
 

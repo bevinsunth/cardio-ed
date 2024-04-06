@@ -8,19 +8,19 @@
   {
     "code": "IC",
     "title": "Isovolumetric Contraction",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Eo_circle_blue_number-2.svg",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/53/Eo_circle_blue_number-2.svg",
     "notesHtml": "<p>During isovolumetric contraction, the ventricles contract, but the semilunar valves are still closed. This means that the volume of blood in the ventricles remains constant. The pressure in the ventricles increases, but the volume does not change. This phase is important because it allows the ventricles to build up enough pressure to open the semilunar valves and push blood into the arteries.</p>"
   },
   {
     "code": "VE",
     "title": "Ventricular Ejection",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Eo_circle_blue_number-3.svg",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Eo_circle_blue_number-3.svg/768px-Eo_circle_blue_number-3.svg.png",
     "notesHtml": "<p>During ventricular ejection, the ventricles contract and push blood out of the heart and into the arteries. This phase is divided into two parts: the rapid ejection phase and the reduced ejection phase. During the rapid ejection phase, blood flows quickly from the ventricles into the arteries. This phase is followed by the reduced ejection phase, during which blood flow slows down as the ventricles empty.</p>"
   },
   {
     "code": "IR",
     "title": "Isovolumetric Relaxation",
-    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4b/Eo_circle_blue_number-4.svg",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eo_circle_blue_number-4.svg/640px-Eo_circle_blue_number-4.svg.png",
     "notesHtml": "<p>During isovolumetric relaxation, the ventricles relax, but the semilunar valves are still closed. This means that the volume of blood in the ventricles remains constant. The pressure in the ventricles decreases, but the volume does not change. This phase is important because it allows the ventricles to build up enough pressure to open the atrioventricular valves and begin the next cycle of ventricular filling.</p>"
   },
   {
