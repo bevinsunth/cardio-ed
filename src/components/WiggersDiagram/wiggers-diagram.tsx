@@ -3,40 +3,50 @@ import { useEffect, useRef } from 'react';
 import wiggersGraphDataJson from '../shared/Data/wiggersDiagram.json';
 import * as graphDataHelper from '@/utils/graphDataHelper';
 import * as interfaces from '@/components/Shared/types';
+import * as styles from '@/components/Shared/styles';
 
 
 
 
 const wiggersGraphData: interfaces.WiggersGraphData = wiggersGraphDataJson;
 
+let minXValue = findMinX(wiggersGraphData.lines);
 let maxXValue = findMaxX(wiggersGraphData.lines);
 let maxYValue = findMaxY(wiggersGraphData.lines);
 let minYValue = findMinY(wiggersGraphData.lines);
 
-const height = maxYValue;
-const width = maxXValue
 
-let xScale = d3.scaleLinear()
-    .domain([0, maxXValue])
-    .range([0, width])
 
-let yScale = d3.scaleLinear()
-    .domain([minYValue - 10, maxYValue])
-    .range([0, height])
 
 
 const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.PressureVolumeActivePointerData | null, setWiggersActivePointerData: (value: interfaces.WiggersActivePointerData) => void }> = ({ pressureVolumeActivePointerData, setWiggersActivePointerData }) => {
-    const ref = useRef<SVGSVGElement | null>(null);
+    const svgRef = useRef<SVGSVGElement | null>(null);
+    const divRef = useRef<HTMLDivElement | null>(null);
     const linesCacheRef = useRef<interfaces.LineCache[]>([]);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
     const overlaysRef = useRef<any>(null);
 
-    useEffect(() => {
-        let svg = d3.select(ref.current)
-            .attr("width", width + 150)
-            .attr("height", height)
+    const svgDimensions = { width: 1671, height: 1280 };
+    const padding = 20;
 
+    let xScale = d3.scaleLinear()
+        .domain([minXValue, maxXValue])
+        .range([padding, svgDimensions.width - padding]);
+
+    let yScale = d3.scaleLinear()
+        .domain([minYValue, maxYValue])
+        .range([padding, svgDimensions.height - padding]);
+    
+
+    useEffect(() => {
+
+
+        let svg = d3.select(svgRef.current)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
+            .attr("width", svgDimensions.width + padding * 2)
+            .attr("height", svgDimensions.height+ padding * 2);
             
 
 
@@ -54,8 +64,8 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .append("rect")
             .attr("x", d => xScale(d.startXCoordinates))
             .attr("y", 0)
-            .attr("width", d => xScale(d.endXCoordinates - d.startXCoordinates))
-            .attr("height", height)
+            .attr("width", d => xScale(d.endXCoordinates) - xScale(d.startXCoordinates))
+            .attr("height", svgDimensions.height)
             .attr("fill", "transparent");
 
         var lineGroup = svg.append("g");
@@ -104,7 +114,7 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             })
             .attr("opacity", 0)
             .attr("r", function (d) {
-                return d.circleSize !== undefined ? d.circleSize : 6;
+                return d.circleSize !== undefined ? d.circleSize : 15;
             })
             .attr("fill", function (d) {
                 return d.color;
@@ -124,28 +134,31 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
                 .attr("dy", ".35em") // Adjust for better alignment
                 .attr("dx", ".5em") // Offset a bit to the right from the end of the line
                 .style("fill", graphData.color) // Match the line color
-                .text(graphData.label);
+                .text(graphData.label)
+                .attr("font-size", "50px");;
         });
 
 
 
-        if (ref && ref.current) {
-            ref.current.addEventListener("mousemove", function (d) {
-
+        if (svgRef && svgRef.current) {
+            svgRef.current.addEventListener("mousemove", function (d) {
+                let [pointerX, pointerY] = d3.pointer(d);
+                let invertedX = xScale.invert(pointerX);
+                let invertedY = yScale.invert(pointerY);
+                handleCircles([invertedX, invertedY]);
+                handleOverlays([invertedX, invertedY]);
                 const sectionCode = wiggersGraphData.sections.find(section => d3.pointer(d)[0] > xScale(section.startXCoordinates) && d3.pointer(d)[0] < xScale(section.endXCoordinates))?.code;
                 if (sectionCode) {
                     setWiggersActivePointerData({
                         activeSectionCode: sectionCode,
-                        activePointer: d3.pointer(d)
+                        activePointer: [invertedX, invertedY]
                     });
                 }
-                handleCircles(d3.pointer(d));
-                handleOverlays(d3.pointer(d));
 
             });
         }
 
-    }, [ref]);
+    }, [svgRef]);
 
     useEffect(() => {
         if (pressureVolumeActivePointerData && pressureVolumeActivePointerData.activePointer && pressureVolumeActivePointerData.activeLineCode && pressureVolumeActivePointerData.activePointer.length > 0) {
@@ -159,8 +172,8 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
 
             const targetLinePoint = graphDataHelper.mapLinePointToTargetLine(sourceLength, targetLength, sourceLinePoint);
 
-            handleCircles([xScale(targetSection.startXCoordinates + targetLinePoint), yScale(0)]);
-            handleOverlays([xScale(targetSection.startXCoordinates + targetLinePoint), yScale(0)]);
+            handleCircles([targetSection.startXCoordinates + targetLinePoint, 0]);
+            handleOverlays([targetSection.startXCoordinates + targetLinePoint, 0]);
         }
     }, [pressureVolumeActivePointerData]);
 
@@ -190,7 +203,7 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         }).attr("fill", "transparent")
             .filter((section: unknown) => {
                 let s = section as interfaces.Section;
-                return xScale(s.startXCoordinates) <= pointer[0] && pointer[0] <= xScale(s.endXCoordinates);
+                return s.startXCoordinates <= pointer[0] && pointer[0] <= s.endXCoordinates;
             })
             .attr("fill", (section: unknown) => {
                 let s = section as interfaces.Section;
@@ -220,7 +233,11 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         return closestPoint;
     }
 
-    return <svg ref={ref} />;
+    return (
+        <div style={styles.svgContainer}>
+            <svg ref={svgRef} style={styles.svgContentResponsive} />
+        </div>
+    );
 };
 
 
@@ -240,6 +257,9 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
 
 function findMaxX(data: any[]) {
     return Math.max(...wiggersGraphData.lines.flatMap(line => line.coordinates.map(point => point.x)));
+}
+function findMinX(data: any[]) {
+    return Math.min(...wiggersGraphData.lines.flatMap(line => line.coordinates.map(point => point.x)));
 }
 
 function findMaxY(data: any[]) {

@@ -4,8 +4,8 @@ import { quadtree } from 'd3';
 import pressureVolumeGraphDataJson from '../shared/data/pressureVolumeLoop.json';
 import wiggersGraphDataJson from '../shared/Data/wiggersDiagram.json';
 import * as interfaces from '@/components/Shared/types';
+import * as styles from '@/components/Shared/styles';
 import * as graphDataHelper from '@/utils/graphDataHelper';
-
 
 
 const wiggersGraphData: interfaces.WiggersGraphData = wiggersGraphDataJson;
@@ -22,32 +22,41 @@ let minYValue = findMinY(pressureVolumeGraphData);
 let midLoopXValue = ((maxXValue - minXValue) / 2) + minXValue;
 let midLoopYValue = ((maxYValue - minYValue) / 2) + minYValue;
 
-const height = 490;
-const width = 500;
-
 // const smallestFirstX = pressureVolumeGraphData.map(line => line.coordinates[0].x).sort((a, b) => a - b)[0];
-
-let xScale = d3.scaleLinear()
-    .domain([0, maxXValue])
-    .range([0, width])
-
-let yScale = d3.scaleLinear()
-    .domain([0, maxYValue])
-    .range([0, height])
 
 
 const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.WiggersActivePointerData | null, setPressureVolumeActivePointerData: (value: interfaces.PressureVolumeActivePointerData) => void }> = ({ wiggersActivePointerData, setPressureVolumeActivePointerData }) => {
-    const ref = useRef<SVGSVGElement | null>(null);
+    const svgRef = useRef<SVGSVGElement | null>(null);
+    const divRef = useRef<HTMLDivElement | null>(null);
     const linesCacheRef = useRef<interfaces.LineCache[]>([]);
     const linesRef = useRef<any>(null);
     const circlesRef = useRef<any>(null);
     const activeLineCodeRef = useRef<string | null>(null);
 
+    const svgDimensions = { width: 856, height: 840 };
+    const padding = 50;
+
+    let xScale = d3.scaleLinear()
+        .domain([minXValue, maxXValue])
+        .range([padding, svgDimensions.width - padding]);
+
+    let yScale = d3.scaleLinear()
+        .domain([minYValue, maxYValue])
+        .range([padding, svgDimensions.height - padding]);
+
+
+
     useEffect(() => {
 
-        let svg = d3.select(ref.current)
-            .attr("width", width + 30)
-            .attr("height", height + 30)
+        // const width = divRef.current ? divRef.current.offsetWidth : 0;
+        // const height = divRef.current ? divRef.current.offsetHeight : 0;
+        // const aspectRatio = svgDimensions.width / svgDimensions.height;
+
+        let svg = d3.select(svgRef.current)
+            .attr("preserveAspectRatio", "xMidYMid meet")
+            .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
+            .attr("width", svgDimensions.width + padding * 2)
+            .attr("height", svgDimensions.height+ padding * 2);
 
         // Define line generator
         const line = d3.line<interfaces.Coordinate>()
@@ -67,10 +76,10 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
                 return line(d.coordinates);
             })
             .attr("stroke", function (d, i) {
-                return pressureVolumeGraphData[i].color;
+                return d.color;
             })
             .attr("fill", "transparent")
-            .attr("stroke-width", "2px");
+            .attr("stroke-width", "8px");
 
 
         if (linesRef.current) {
@@ -93,38 +102,15 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
                 };
 
 
-                // Append a circle to the start coordinates of each line
+                //Append a circle to the start coordinates of each line
                 let circle = svg.append("circle")
                     .attr("cx", lineCoordinates[0].x)
                     .attr("cy", lineCoordinates[0].y)
-                    .attr("r", 10) // radius of the circle
+                    .attr("r", 15) // radius of the circle
                     .style("fill", "red"); // color of the circle
 
             });
         }
-
-        // Define the arrow marker
-        svg.append('defs').append('marker')
-            .attr('id', 'arrow')
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 5)
-            .attr('refY', 0)
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
-            .attr('orient', 'auto-start-reverse')
-            .append('path')
-            .attr('d', 'M0,-5L10,0L0,5')
-            .attr('class', 'arrowHead');
-
-        svg.append('line')
-            .attr('x1', xScale(minXValue) + 10)
-            .attr('y1', yScale(midLoopYValue))
-            .attr('x2', xScale(maxXValue) - 10)
-            .attr('y2', yScale(midLoopYValue))
-            .attr('marker-start', 'url(#arrow)')
-            .attr('marker-end', 'url(#arrow)')
-            .attr('stroke', 'black')
-            .attr('stroke-width', 2);
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(pressureVolumeGraphData)
@@ -133,15 +119,15 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             .attr("d", function (d) {
                 return line(d.coordinates);
             })
-            .attr("r", 6)
+            .attr("r", 15)
             .attr("opacity", 0)
             .attr("fill", function (d, i) {
-                return pressureVolumeGraphData[i].color;
+                return d.color;
             });
 
 
-        if (ref && ref.current) {
-            ref.current.addEventListener("mousemove", function (d) {
+        if (svg && svgRef.current) {
+            svgRef.current.addEventListener("mousemove", function (d) {
                 let pointer = d3.pointer(d);
 
                 let { closestPoint, closestLineCode } = getClosestPointer(pointer);
@@ -163,7 +149,7 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             });
         }
 
-    }, [ref]);
+    }, [svgRef]);
 
 
     useEffect(() => {
@@ -299,7 +285,9 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
 
 
     return (
-        <svg ref={ref} />
+        <div style={styles.svgContainer}>
+            <svg ref={svgRef} style={styles.svgContentResponsive} />
+        </div>
     );
 };
 

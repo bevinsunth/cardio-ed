@@ -1166,7 +1166,9 @@
         }
     ]
     ,
-      "color": "rgba(0, 0, 255, 1)"
+      "color": "rgba(0, 0, 255, 1)",
+      "lineSize": 10,
+      "circleSize": 15
     },
     {
       "code": "AP",
@@ -1868,8 +1870,8 @@
     ,
       "color": "rgba(254, 189, 81, 1)",
       "lableYOffset": -10,
-      "lineSize": 1.2,
-      "circleSize": 3
+      "lineSize": 10,
+      "circleSize": 15
     },
     {
       "code": "VV",
@@ -2656,7 +2658,9 @@
           "y": 811.00
         }
       ],
-      "color": "rgba(254, 12, 254, 1)"
+      "lineSize": 10,
+      "color": "rgba(254, 12, 254, 1)",
+      "circleSize": 15
     },
     {
       "code": "AV",
@@ -3388,9 +3392,9 @@
         }
     ]
     ,
-      "color": "rgba(254, 75, 12, 0.5)",
-      "lineSize": 1.2,
-      "circleSize": 3
+      "color": "rgba(254, 75, 12, 1)",
+      "lineSize": 10,
+      "circleSize": 15
     },
     {
       "code": "EV",
@@ -4309,7 +4313,9 @@
           "y": 964.75
         }
       ],
-      "color": "rgba(0, 234, 128)"
+      "lineSize": 10,
+      "color": "rgba(0, 234, 128)",
+      "circleSize": 15
     }
   ],
   "sections": [
@@ -4318,7 +4324,7 @@
       "name": "Isovolumetric Contraction",
       "startXCoordinates": 392,
       "endXCoordinates": 420,
-      "color": "rgba(0, 123, 255, 1)"
+      "color": "rgba(0, 123, 255, 0.2)"
     },
     {
       "code": "VE",

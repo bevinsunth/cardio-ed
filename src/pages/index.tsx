@@ -10,7 +10,7 @@ export const components = {
 
 
 const Home: React.FC = () => {
-  const [pressureVolumeActivePointerData, setPressureVolumeActivePointerData] = useState<interfaces.PressureVolumeActivePointerData| null>(null);
+  const [pressureVolumeActivePointerData, setPressureVolumeActivePointerData] = useState<interfaces.PressureVolumeActivePointerData | null>(null);
   const [wiggersActivePointerData, setWiggersActivePointerData] = useState<interfaces.WiggersActivePointerData | null>(null);
 
   const pressureLoopProps = {
@@ -26,20 +26,23 @@ const Home: React.FC = () => {
   const notesProps = {
     activeLineCode: pressureVolumeActivePointerData?.activeLineCode ?? null,
   };
-  console.log('notesProps recalculated', notesProps);
 
   return (
     <>
 
-<div style={{ display: 'flex' }}>
-<div  style={{ flex:1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-    <components.notesAreaComponent {...notesProps}/>
-  </div>
-<div style={{ flex: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-  <components.pressureVolumeLoop {...pressureLoopProps} />
-  <components.wiggersDiagram {...wiggersDiagramProps} />
-</div>
-</div>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <components.notesAreaComponent {...notesProps} />
+        </div>
+        <div style={{ flex: 4, display: "flex", flexDirection: "column", height: "100vh" }}>
+          <div style={{ flex: 1, overflow: "auto" }}>
+            <components.pressureVolumeLoop {...pressureLoopProps} />
+          </div>
+          <div style={{ flex: 1, overflow: "auto" }}>
+            <components.wiggersDiagram {...wiggersDiagramProps} />
+          </div>
+        </div>
+      </div>
     </>
   );
 };
