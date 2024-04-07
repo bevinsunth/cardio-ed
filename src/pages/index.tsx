@@ -5,7 +5,7 @@ import * as interfaces from '@/components/shared/types';
 export const components = {
   notesAreaComponent: dynamic(() => import("@/components/notesArea/NotesArea"), { ssr: false }),
   pressureVolumeLoop: dynamic(() => import("@/components/pressureVolumeLoop/PressureVolumeLoop"), { ssr: false }),
-  wiggersDiagram: dynamic(() => import("@/components/wiggersDiagram/wiggers-diagram"), { ssr: false }),
+  wiggersDiagram: dynamic(() => import("@/components/wiggersDiagram/WiggersDiagram"), { ssr: false }),
 };
 
 
