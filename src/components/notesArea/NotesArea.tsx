@@ -1,7 +1,7 @@
 import React from 'react';
 import { CSSProperties, useEffect, useState } from 'react';
 import notesDataJson from '@/components/shared/data/information.json';
-import * as interfaces from '@/components/Shared/types';
+import * as interfaces from '@/components/shared/types';
 
 const styles: CSSProperties = {
     visibility: "visible",
