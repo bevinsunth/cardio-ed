@@ -1,9 +1,9 @@
-function mapPointToSecondLine(line1Length: number, line2Length: number, line1Point: number) {
+export function mapLinePointToTargetLine(sourceLineLength: number, targetLineLength: number, sourceLinePoint: number) {
     // Calculate the ratio of the lengths of the two lines
-    const lengthRatio = line2Length / line1Length;
+    const lengthRatio = targetLineLength / sourceLineLength;
   
     // Multiply the point on the first line by the length ratio to get the corresponding point on the second line
-    const line2Point = line1Point * lengthRatio;
+    const targetLinePoint = sourceLinePoint * lengthRatio;
   
-    return line2Point;
+    return targetLinePoint;
   }

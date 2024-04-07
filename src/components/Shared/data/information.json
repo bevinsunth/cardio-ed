@@ -1,0 +1,32 @@
+[
+  {
+    "code": "VF",
+    "title": "Vetricular Filling",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Eo_circle_blue_number-1.svg",
+    "notesHtml": "<p>During ventricular filling, the ventricles are relaxed and the atria contract, pushing blood into the ventricles. This phase is divided into two parts: the rapid filling phase and the diastasis phase. During the rapid filling phase, blood flows quickly from the atria into the ventricles. This phase is followed by the diastasis phase, during which blood flow slows down as the ventricles fill to capacity.</p>"
+  },
+  {
+    "code": "IC",
+    "title": "Isovolumetric Contraction",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/53/Eo_circle_blue_number-2.svg",
+    "notesHtml": "<p>During isovolumetric contraction, the ventricles contract, but the semilunar valves are still closed. This means that the volume of blood in the ventricles remains constant. The pressure in the ventricles increases, but the volume does not change. This phase is important because it allows the ventricles to build up enough pressure to open the semilunar valves and push blood into the arteries.</p>"
+  },
+  {
+    "code": "VE",
+    "title": "Ventricular Ejection",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Eo_circle_blue_number-3.svg/768px-Eo_circle_blue_number-3.svg.png",
+    "notesHtml": "<p>During ventricular ejection, the ventricles contract and push blood out of the heart and into the arteries. This phase is divided into two parts: the rapid ejection phase and the reduced ejection phase. During the rapid ejection phase, blood flows quickly from the ventricles into the arteries. This phase is followed by the reduced ejection phase, during which blood flow slows down as the ventricles empty.</p>"
+  },
+  {
+    "code": "IR",
+    "title": "Isovolumetric Relaxation",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Eo_circle_blue_number-4.svg/640px-Eo_circle_blue_number-4.svg.png",
+    "notesHtml": "<p>During isovolumetric relaxation, the ventricles relax, but the semilunar valves are still closed. This means that the volume of blood in the ventricles remains constant. The pressure in the ventricles decreases, but the volume does not change. This phase is important because it allows the ventricles to build up enough pressure to open the atrioventricular valves and begin the next cycle of ventricular filling.</p>"
+  },
+  {
+    "code": "Default",
+    "title": "Lets learn about heart cycle! Hover over the phases to know more.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/CG_Heart.gif/640px-CG_Heart.gif",
+    "notesHtml": "<p>The cardiac cycle is the sequence of events that occurs when the heart beats. It is divided into two phases: diastole and systole. During diastole, the heart relaxes and fills with blood. During systole, the heart contracts and pumps blood to the rest of the body. The cardiac cycle is regulated by electrical signals that control the timing and coordination of the heart's contractions. Understanding the cardiac cycle is important for diagnosing and treating heart conditions.</p>"
+  }
+]
