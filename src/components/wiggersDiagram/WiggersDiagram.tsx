@@ -1,9 +1,9 @@
 import * as d3 from 'd3';
 import { useEffect, useRef } from 'react';
-import wiggersGraphDataJson from '@/components/shared/Data/wiggersDiagram.json';
+import wiggersGraphDataJson from '@/components/shared/data/wiggersDiagram.json';
 import * as graphDataHelper from '@/utils/graphDataHelper';
-import * as interfaces from '@/components/Shared/types';
-import * as styles from '@/components/Shared/styles';
+import * as interfaces from '@/components/shared/types';
+import * as styles from '@/components/shared/styles';
 
 
 
