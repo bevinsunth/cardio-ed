@@ -1,6 +1,6 @@
 import React from 'react';
 import { CSSProperties, useEffect, useState } from 'react';
-import notesDataJson from '../shared/data/information.json';
+import notesDataJson from '@/components/shared/data/information.json';
 import * as interfaces from '@/components/Shared/types';
 
 const styles: CSSProperties = {
