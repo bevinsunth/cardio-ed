@@ -138,6 +138,14 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
                 .attr("font-size", "50px");;
         });
 
+        svg.append('text')
+        .attr('class', 'title')
+        .attr('x', svgDimensions.width / 2 + 20)
+        .attr('y', svgDimensions.height - 10)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '60')
+        .text('Wiggers Diagram');
+
 
 
         if (svgRef && svgRef.current) {

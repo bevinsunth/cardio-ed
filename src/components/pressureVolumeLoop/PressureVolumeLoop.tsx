@@ -58,6 +58,14 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             .attr("width", svgDimensions.width + padding * 2)
             .attr("height", svgDimensions.height+ padding * 2);
 
+            svg.append('text')
+            .attr('class', 'title')
+            .attr('x', svgDimensions.width / 2 + 20)
+            .attr('y', svgDimensions.height + 5)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '40')
+            .text('Pressure Loop Diagram');
+
         // Define line generator
         const line = d3.line<interfaces.Coordinate>()
             .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
