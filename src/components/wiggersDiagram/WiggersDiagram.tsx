@@ -69,21 +69,20 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .attr("fill", "transparent");
 
         var lineGroup = svg.append("g");
-        linesRef.current = lineGroup.selectAll(".gLine")
+        linesRef.current = lineGroup.selectAll(".gLineSolid")
             .data(wiggersGraphData.lines)
             .enter()
             .append("path")
-            .attr("class", "gLine")
+            .attr("class", "gLineSolid")
             .attr("d", function (d) {
-                return line(d.coordinates.sort((a, b) => a.x - b.x));
+                var filteredCoordinates = d.coordinates.filter(coord => 
+                    coord.x >= 392 && coord.x <= 966
+                );
+                return line(filteredCoordinates.sort((a, b) => a.x - b.x));
             })
-            .attr("stroke", function (d, i) {
-                return d.color;
-            })
+            .attr("stroke", d => d.color)
             .attr("fill", "transparent")
-            .attr("stroke-width", function (d) {
-                return d.lineSize !== undefined ? d.lineSize : 2;
-            });
+            .attr("stroke-width", d => d.lineSize !== undefined ? d.lineSize : 2);
 
         if (linesRef.current) {
             linesRef.current.nodes().forEach((lineNode: any, index: number) => {
@@ -104,6 +103,40 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
                 };
             });
         }
+
+        // Create the dotted lines
+lineGroup.selectAll(".gLineDotted1")
+.data(wiggersGraphData.lines)
+.enter()
+.append("path")
+.attr("class", "gLineDotted")
+.attr("d", function (d) {
+    var filteredCoordinates = d.coordinates.filter(coord => 
+        coord.x < 392
+    );
+    return line(filteredCoordinates.sort((a, b) => a.x - b.x));
+})
+.attr("stroke", d => d.color)
+.attr("fill", "transparent")
+.attr("stroke-width", 7)
+.attr("stroke-dasharray", "10,7");
+
+        // Create the dotted lines
+        lineGroup.selectAll(".gLineDotted2")
+        .data(wiggersGraphData.lines)
+        .enter()
+        .append("path")
+        .attr("class", "gLineDotted")
+        .attr("d", function (d) {
+            var filteredCoordinates = d.coordinates.filter(coord => 
+                coord.x > 966
+            );
+            return line(filteredCoordinates.sort((a, b) => a.x - b.x));
+        })
+        .attr("stroke", d => d.color)
+        .attr("fill", "transparent")
+        .attr("stroke-width", 7)
+        .attr("stroke-dasharray", "10,7");
 
         circlesRef.current = lineGroup.selectAll("circle")
             .data(wiggersGraphData.lines)
