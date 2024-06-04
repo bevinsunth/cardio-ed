@@ -47,7 +47,6 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
             .attr("width", svgDimensions.width + padding * 2)
             .attr("height", svgDimensions.height+ padding * 2);
-            
 
 
         // Define line generator
@@ -58,15 +57,15 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
 
         let sectionGroup = svg.append("g");
 
-        overlaysRef.current = sectionGroup.selectAll("rect")
-            .data(wiggersGraphData.sections)
-            .enter()
-            .append("rect")
-            .attr("x", d => xScale(d.startXCoordinates))
-            .attr("y", 0)
-            .attr("width", d => xScale(d.endXCoordinates) - xScale(d.startXCoordinates))
-            .attr("height", svgDimensions.height)
-            .attr("fill", "transparent");
+        // overlaysRef.current = sectionGroup.selectAll("rect")
+        //     .data(wiggersGraphData.sections)
+        //     .enter()
+        //     .append("rect")
+        //     .attr("x", d => xScale(d.startXCoordinates))
+        //     .attr("y", 0)
+        //     .attr("width", d => xScale(d.endXCoordinates) - xScale(d.startXCoordinates))
+        //     .attr("height", svgDimensions.height)
+        //     .attr("fill", "transparent");
 
         var lineGroup = svg.append("g");
         linesRef.current = lineGroup.selectAll(".gLineSolid")
