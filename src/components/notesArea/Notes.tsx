@@ -1,4 +1,5 @@
 import React, { CSSProperties } from 'react';
+import Image from 'next/image';
 
 const tableStyles: { [key: string]: CSSProperties } = {
     table: {
@@ -49,10 +50,10 @@ export const VF = () => (
     <div style={styles}>
     <h2>Vetricular Filling</h2>
     <div style={imageBoxStyles}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Eo_circle_blue_number-1.svg" alt="Vetricular Filling" style={imageStyles}/>
+    <Image src="/images/VF.png" width={100} height={100} alt="Descriptive Alt Text" style={imageStyles} />
     </div>
     <div id="notesArea">
-    <p>During ventricular filling, the ventricles are relaxed and the atria contract, pushing blood into the ventricles. This phase is divided into two parts: the rapid filling phase and the diastasis phase. During the rapid filling phase, blood flows quickly from the atria into the ventricles. This phase is followed by the diastasis phase, during which blood flow slows down as the ventricles fill to capacity.</p>
+    <p>During ventricular filling, the atrioventricular (AV) valves open, allowing blood to flow from the atria into the ventricles. This phase occurs during diastole, when the heart muscles are relaxed.</p>
     <table style={tableStyles.table}>
   <tr>
     <th style={tableStyles.th}> Phase </th>
@@ -85,10 +86,10 @@ export const IC = () => (
     <div style={styles}>
     <h2>Vetricular Filling</h2>
     <div style={imageBoxStyles}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Eo_circle_blue_number-1.svg" alt="Vetricular Filling" style={imageStyles}/>
+    <Image src="/images/IC.png" width={100} height={100} alt="Descriptive Alt Text" style={imageStyles} />
     </div>
     <div id="notesArea">
-    <p>During isovolumetric contraction, the ventricles contract with the semilunar valves closed, increasing pressure without changing blood volume. This phase builds enough pressure to open the semilunar valves and push blood into the arteries.</p>
+    <p>In the isovolumetric contraction phase, the ventricles contract with all valves closed, causing a rapid increase in ventricular pressure. This phase prepares the ventricles for the ejection of blood but no blood is ejected yet.</p>
     <table style={tableStyles.table}>
   <tr>
     <th style={tableStyles.th}> Phase </th>
@@ -119,10 +120,10 @@ export const VE = () => (
     <div style={styles}>
     <h2>Vetricular Filling</h2>
     <div style={imageBoxStyles}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Eo_circle_blue_number-1.svg" alt="Vetricular Filling" style={imageStyles}/>
+    <Image src="/images/VE.png" width={100} height={100} alt="Descriptive Alt Text" style={imageStyles} />
     </div>
     <div id="notesArea">
-    <p>During ventricular ejection, the ventricles contract and push blood into the arteries, starting with the rapid ejection phase, followed by the reduced ejection phase as the ventricles empty. Blood flow is fast in the rapid phase and slows in the reduced phase.</p>
+    <p>During ventricular ejection, the semilunar valves open due to high pressure in the ventricles, allowing blood to be pumped out into the aorta and pulmonary artery. This phase occurs during systole, when the ventricles are actively contracting</p>
     <table style={tableStyles.table}>
   <tr>
     <th style={tableStyles.th}> Phase </th>
@@ -154,10 +155,10 @@ export const IR = () => (
     <div style={styles}>
     <h2>Vetricular Filling</h2>
     <div style={imageBoxStyles}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Eo_circle_blue_number-1.svg" alt="Vetricular Filling" style={imageStyles}/>
+    <Image src="/images/IR.png" width={100} height={100} alt="Descriptive Alt Text" style={imageStyles} />
     </div>
     <div id="notesArea">
-    <p>During isovolumetric relaxation, the ventricles relax while the semilunar valves remain closed, keeping the blood volume constant. This phase decreases pressure in the ventricles, preparing them to open the atrioventricular valves for the next filling cycle.</p>
+    <p>In the isovolumetric relaxation phase, the ventricles relax with all valves closed, leading to a rapid drop in ventricular pressure. This phase occurs just before ventricular filling begins again, completing the cycle.</p>
     <table style={tableStyles.table}>
   <tr>
     <th style={tableStyles.th}> Phase </th>
@@ -186,34 +187,12 @@ export const IR = () => (
 
 export const Default = () => (
     <div style={styles}>
-    <h2>Vetricular Filling</h2>
+    <h2>Lets learn about heart cycle! Hover over the images to start.</h2>
     <div style={imageBoxStyles}>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fd/Eo_circle_blue_number-1.svg" alt="Vetricular Filling" style={imageStyles}/>
+        <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Latidos.gif/640px-Latidos.gif" alt="Introduction" height={300} width={300} style={imageStyles}/>
     </div>
     <div id="notesArea">
-    <p>During isovolumetric contraction, the ventricles contract while the semilunar valves remain closed, causing the pressure within the ventricles to increase without a change in blood volume. This phase is essential for building up enough pressure to open the semilunar valves and push blood into the arteries.</p>
-    <table style={tableStyles.table}>
-  <tr>
-    <th style={tableStyles.th}> Phase </th>
-    <th style={tableStyles.th}>Isovolumetric Contraction</th>
-  </tr>
-  <tr>
-    <td style={tableStyles.td}>Atrial state</td>
-    <td style={tableStyles.td}>relaxed</td>
-  </tr>
-  <tr>
-    <td style={tableStyles.td}>Ventricular state</td>
-    <td style={tableStyles.td}>isovolumetric contraction</td>
-  </tr>
-  <tr>
-    <td style={tableStyles.td}>State of atrioventricular valves</td>
-    <td style={tableStyles.td}>closed (*1st heart sound)</td>
-  </tr>
-  <tr>
-    <td style={tableStyles.td}>State of aortic and pulmonary valves</td>
-    <td style={tableStyles.td}>closed</td>
-  </tr>
-</table>
+    <p></p>
     </div>
 </div>
 );

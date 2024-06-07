@@ -72,23 +72,25 @@ const axisTitleStyle = {
 };
 
 svg.append("text")             
-.attr('x', svgDimensions.width / 2 + 20)
-.attr('y', svgDimensions.height - 20)
+.attr('x', svgDimensions.width / 2 + 30)
+.attr('y', svgDimensions.height - 10)
 .style("text-anchor", "middle")
 .style('font-size', axisTitleStyle.fontSize)
 .style('font-weight', axisTitleStyle.fontWeight)
 .style('font-family', axisTitleStyle.fontFamily)
+.style('fill', 'salmon')
 .text("Left Ventricle Pressure (mmHg)");
 
 svg.append("text")
 .attr("transform", "rotate(-90)")
-.attr("y", 0 - padding + 60)
+.attr("y", 0 - padding + 50)
 .attr("x",0 - (svgDimensions.height / 2) - padding)
 .attr("dy", "1em")
 .style("text-anchor", "middle")
 .style('font-size', axisTitleStyle.fontSize)
 .style('font-weight', axisTitleStyle.fontWeight)
 .style('font-family', axisTitleStyle.fontFamily)
+.style('fill', 'salmon')
 .text("Left Ventricle Volume (mL)");
 
         // Define line generator
