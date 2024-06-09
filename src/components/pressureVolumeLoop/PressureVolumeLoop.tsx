@@ -19,8 +19,6 @@ let maxXValue = findMaxX(pressureVolumeGraphData);
 let maxYValue = findMaxY(pressureVolumeGraphData);
 let minXValue = findMinX(pressureVolumeGraphData);
 let minYValue = findMinY(pressureVolumeGraphData);
-let midLoopXValue = ((maxXValue - minXValue) / 2) + minXValue;
-let midLoopYValue = ((maxYValue - minYValue) / 2) + minYValue;
 
 // const smallestFirstX = pressureVolumeGraphData.map(line => line.coordinates[0].x).sort((a, b) => a - b)[0];
 
@@ -57,6 +55,43 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
             .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
             .attr("width", svgDimensions.width + padding * 2)
             .attr("height", svgDimensions.height+ padding * 2);
+
+            svg.append('text')
+            .attr('class', 'title')
+            .attr('x', svgDimensions.width / 2 + 20)
+            .attr('y', svgDimensions.height + 40)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '40')
+            .text('Pressure Loop Diagram');
+
+            // Assuming svg is your D3 selection for the chart
+const axisTitleStyle = {
+  fontSize: '25px',
+  fontWeight: 'italic',
+  fontFamily: 'Arial, sans-serif',
+};
+
+svg.append("text")             
+.attr('x', svgDimensions.width / 2 + 30)
+.attr('y', svgDimensions.height - 10)
+.style("text-anchor", "middle")
+.style('font-size', axisTitleStyle.fontSize)
+.style('font-weight', axisTitleStyle.fontWeight)
+.style('font-family', axisTitleStyle.fontFamily)
+.style('fill', 'salmon')
+.text("Left Ventricle Pressure (mmHg)");
+
+svg.append("text")
+.attr("transform", "rotate(-90)")
+.attr("y", 0 - padding + 50)
+.attr("x",0 - (svgDimensions.height / 2) - padding)
+.attr("dy", "1em")
+.style("text-anchor", "middle")
+.style('font-size', axisTitleStyle.fontSize)
+.style('font-weight', axisTitleStyle.fontWeight)
+.style('font-family', axisTitleStyle.fontFamily)
+.style('fill', 'salmon')
+.text("Left Ventricle Volume (mL)");
 
         // Define line generator
         const line = d3.line<interfaces.Coordinate>()
