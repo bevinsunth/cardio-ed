@@ -31,10 +31,10 @@ const Home: React.FC = () => {
     <>
 
       <div style={{ display: 'flex' }}>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ flex: 2.5, display: "flex", flexDirection: "column", alignItems: "center" }}>
           <components.notesAreaComponent {...notesProps} />
         </div>
-        <div style={{ flex: 4, display: "flex", flexDirection: "column", height: "100vh" }}>
+        <div style={{ flex: 4.5, display: "flex", flexDirection: "column", height: "100vh" }}>
           <div style={{ flex: 1, overflow: "auto" }}>
             <components.pressureVolumeLoop {...pressureLoopProps} />
           </div>

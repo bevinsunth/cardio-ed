@@ -25,8 +25,8 @@ const styles: CSSProperties = {
     borderWidth: "1px",
     borderRadius: "5px",
     padding: "10px",
-    width: "20vw",
-    height: "95vh",
+    width: "95%",
+    height: "95%",
     overflow: "auto",
 };
 
