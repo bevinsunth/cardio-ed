@@ -48,7 +48,7 @@ const imageStyles: CSSProperties = {
 
 export const VF = () => (
     <div style={styles}>
-    <h2>Vetricular Filling</h2>
+    <h2>ventricular Filling</h2>
     <div style={imageBoxStyles}>
     <Image src="/images/VF.png" width={100} height={100} alt="Descriptive Alt Text" style={imageStyles} />
     </div>
@@ -102,7 +102,7 @@ export const IC = () => (
 
 export const VE = () => (
     <div style={styles}>
-    <h2>Vetricular Ejection</h2>
+    <h2>ventricular Ejection</h2>
     <div style={imageBoxStyles}>
     <Image src="/images/VE.png" width={100} height={100} alt="Descriptive Alt Text" style={imageStyles} />
     </div>

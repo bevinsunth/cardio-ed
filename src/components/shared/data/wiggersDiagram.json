@@ -2,7 +2,7 @@
   "lines": [
     {
       "code": "VP",
-      "label": "Vetricular Pressure",
+      "label": "ventricular Pressure",
       "coordinates": [
         {
             "x":  242,
@@ -4328,7 +4328,7 @@
     },
     {
       "code": "VE",
-      "name": "Vetricular Ejection",
+      "name": "ventricular Ejection",
       "startXCoordinates": 421,
       "endXCoordinates": 596,
       "color": "rgba(0, 123, 255, 0.2)"
@@ -4342,7 +4342,7 @@
     },
     {
       "code": "VF",
-      "name": "Vetricular Filling",
+      "name": "ventricular Filling",
       "startXCoordinates": 625,
       "endXCoordinates": 966,
       "color": "rgba(0, 123, 255, 0.2)"
