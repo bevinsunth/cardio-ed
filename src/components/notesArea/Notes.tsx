@@ -157,7 +157,7 @@ export const Default = () => (
     <div style={styles}>
     <h2>Lets learn about heart cycles! Hover over the images to start.</h2>
     <div style={imageBoxStyles}>
-        <Image src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Latidos.gif/640px-Latidos.gif" alt="Introduction" height={300} width={300} style={imageStyles}/>
+        <Image src="images/beating-heart.gif" alt="Beating heart" height={300} width={300} style={imageStyles}/>
     </div>
     <div id="notesArea">
     <p></p>
