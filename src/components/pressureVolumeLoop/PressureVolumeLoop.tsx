@@ -59,8 +59,8 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
         let svg = d3.select(svgRef.current)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
-            .attr("width", svgDimensions.width + padding * 2)
-            .attr("height", svgDimensions.height+ padding * 2);
+            .attr("width", "100%")
+            .attr("height", "100%");
 
                     // Append the title text above the SVG
         svg.append('text')
@@ -68,7 +68,9 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
         .attr('x', svgDimensions.width / 2)
         .attr('y', 30) // Position the title above the SVG
         .attr('text-anchor', 'middle')
-        .style('font-size', '40px')
+        .style('font-family', 'Arial, Helvetica, sans-serif')
+        .style('font-size', '35px')
+        .style('font-weight', 'bold')
         .text('Pressure Loop Diagram');
 
             // svg.append('text')

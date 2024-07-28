@@ -28,11 +28,11 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
     const overlaysRef = useRef<any>(null);
 
     const svgDimensions = { width: 1671, height: 1280 };
-    const padding = 20;
+    const padding = 50;
 
     let xScale = d3.scaleLinear()
         .domain([minXValue, maxXValue])
-        .range([padding, svgDimensions.width - padding]);
+        .range([0, svgDimensions.width - padding - 100]);
 
     let yScale = d3.scaleLinear()
         .domain([minYValue, maxYValue])
@@ -45,8 +45,8 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         let svg = d3.select(svgRef.current)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
-            .attr("width", svgDimensions.width + padding * 2)
-            .attr("height", svgDimensions.height+ padding * 2);
+            .attr("width", "100%")
+            .attr("height", "100%");
 
 
         // Define line generator
@@ -159,12 +159,14 @@ lineGroup.selectAll(".gLineDotted1")
         });
 
         svg.append('text')
-        .attr('class', 'title')
-        .attr('x', svgDimensions.width / 2 + 20)
-        .attr('y', svgDimensions.height - 10)
-        .attr('text-anchor', 'middle')
-        .style('font-size', '60')
-        .text('Wiggers Diagram');
+            .attr('class', 'title')
+            .attr('x', svgDimensions.width / 2 + 20)
+            .attr('y', svgDimensions.height - 5)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Arial, Helvetica, sans-serif')
+            .style('font-size', '50px')
+            .style('font-weight', 'bold')
+            .text('Wiggers Diagram');
 
 
 
