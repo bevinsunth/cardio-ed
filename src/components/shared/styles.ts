@@ -1,12 +1,20 @@
+import { toPadding } from 'chart.js/helpers';
 import { CSSProperties } from 'react';
 
 export const svgContainer: CSSProperties = {
     display: "inline-block",
     position: "relative",
+    verticalAlign: "top",
+    border: "hidden",
+    borderWidth: "1px",
+    borderRadius: "5px",
+    top: "0",
+    left: "0",
+    bottom: "0",
+    right: "0",
     width: "100%",
     height: "100%",
-    verticalAlign: "top",
-    overflow: "hidden"
+    overflow: "hidden", 
 };
 
 export const svgContentResponsive: CSSProperties = {

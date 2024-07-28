@@ -27,18 +27,22 @@ const Home: React.FC = () => {
     activeLineCode: pressureVolumeActivePointerData?.activeLineCode ?? null,
   };
 
+  useEffect(() => {
+    document.body.style.fontFamily = 'Arial, Helvetica, sans-serif';
+  }, []);
+
   return (
     <>
 
       <div style={{ display: 'flex' }}>
-        <div style={{ flex: 2.5, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ flex: 2.5, display: "flex", flexDirection: "column", padding: "5px", alignItems: "center", height: "98vh" }}>
           <components.notesAreaComponent {...notesProps} />
         </div>
-        <div style={{ flex: 4.5, display: "flex", flexDirection: "column", height: "100vh" }}>
-          <div style={{ flex: 1, overflow: "auto" }}>
+        <div style={{ flex: 4.5, display: "flex", flexDirection: "column", padding: "0px", height: "98vh" }}>
+          <div style={{ flex: 1,display: "flex", overflow: "hidden", padding: "2px" }}>
             <components.pressureVolumeLoop {...pressureLoopProps} />
           </div>
-          <div style={{ flex: 1, overflow: "auto" }}>
+          <div style={{ flex: 1,display: "flex",overflow: "hidden", padding: "2px" }}>
             <components.wiggersDiagram {...wiggersDiagramProps} />
           </div>
         </div>

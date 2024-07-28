@@ -31,6 +31,8 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
     const circlesRef = useRef<any>(null);
     const activeLineCodeRef = useRef<string | null>(null);
 
+    
+
     const svgDimensions = { width: 856, height: 840 };
     const padding = 50;
 
@@ -50,19 +52,34 @@ const PressureVolumeLoop: React.FC<{ wiggersActivePointerData: interfaces.Wigger
         // const height = divRef.current ? divRef.current.offsetHeight : 0;
         // const aspectRatio = svgDimensions.width / svgDimensions.height;
 
+        
+        
+
+
         let svg = d3.select(svgRef.current)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
-            .attr("width", svgDimensions.width + padding * 2)
-            .attr("height", svgDimensions.height+ padding * 2);
+            .attr("width", "100%")
+            .attr("height", "100%");
 
-            svg.append('text')
-            .attr('class', 'title')
-            .attr('x', svgDimensions.width / 2 + 20)
-            .attr('y', svgDimensions.height + 40)
-            .attr('text-anchor', 'middle')
-            .style('font-size', '40')
-            .text('Pressure Loop Diagram');
+                    // Append the title text above the SVG
+        svg.append('text')
+        .attr('class', 'title')
+        .attr('x', svgDimensions.width / 2)
+        .attr('y', 30) // Position the title above the SVG
+        .attr('text-anchor', 'middle')
+        .style('font-family', 'Arial, Helvetica, sans-serif')
+        .style('font-size', '35px')
+        .style('font-weight', 'bold')
+        .text('Pressure Loop Diagram');
+
+            // svg.append('text')
+            // .attr('class', 'title')
+            // .attr('x', svgDimensions.width / 2 + 20)
+            // .attr('y', svgDimensions.height + 40)
+            // .attr('text-anchor', 'middle')
+            // .style('font-size', '40')
+            // .text('Pressure Loop Diagram');
 
             // Assuming svg is your D3 selection for the chart
 const axisTitleStyle = {
@@ -71,27 +88,28 @@ const axisTitleStyle = {
   fontFamily: 'Arial, sans-serif',
 };
 
+
 svg.append("text")             
-.attr('x', svgDimensions.width / 2 + 30)
-.attr('y', svgDimensions.height - 10)
+.attr('x', svgDimensions.width / 2)
+.attr('y', (svgDimensions.height - padding / 2) + 20)
 .style("text-anchor", "middle")
 .style('font-size', axisTitleStyle.fontSize)
 .style('font-weight', axisTitleStyle.fontWeight)
 .style('font-family', axisTitleStyle.fontFamily)
-.style('fill', 'salmon')
-.text("Left Ventricle Pressure (mmHg)");
+.style('fill', 'rgb(129, 133, 137)')
+.text("Left Ventricle Volume (mL)");
 
 svg.append("text")
 .attr("transform", "rotate(-90)")
-.attr("y", 0 - padding + 50)
-.attr("x",0 - (svgDimensions.height / 2) - padding)
+.attr("y", (padding / 2) - 25)
+.attr("x", (0 - (svgDimensions.height / 2)))
 .attr("dy", "1em")
 .style("text-anchor", "middle")
 .style('font-size', axisTitleStyle.fontSize)
 .style('font-weight', axisTitleStyle.fontWeight)
 .style('font-family', axisTitleStyle.fontFamily)
-.style('fill', 'salmon')
-.text("Left Ventricle Volume (mL)");
+.style('fill', 'rgb(129, 133, 137)')
+.text("Left Ventricle Pressure (mmHg)");
 
         // Define line generator
         const line = d3.line<interfaces.Coordinate>()
@@ -141,9 +159,9 @@ svg.append("text")
                 let circle = svg.append("circle")
                     .attr("cx", lineCoordinates[0].x)
                     .attr("cy", lineCoordinates[0].y)
-                    .attr("r", 15) // radius of the circle
-                    .style("fill", "red"); // color of the circle
-
+                    .attr("r", 4) // radius of the circle
+                    .style("fill", "rgba(255, 99, 132, 1)") // color of the circle
+                    .lower();
             });
         }
 
@@ -156,9 +174,9 @@ svg.append("text")
             })
             .attr("r", 15)
             .attr("opacity", 0)
-            .attr("fill", function (d, i) {
-                return d.color;
-            });
+            .attr("fill", "rgb(54, 69, 79)")
+            .attr("stroke", function(d) { return d.color; }) // Outline color
+            .attr("stroke-width", 4); // Outline width
 
 
         if (svg && svgRef.current) {

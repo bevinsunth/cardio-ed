@@ -28,11 +28,11 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
     const overlaysRef = useRef<any>(null);
 
     const svgDimensions = { width: 1671, height: 1280 };
-    const padding = 20;
+    const padding = 50;
 
     let xScale = d3.scaleLinear()
         .domain([minXValue, maxXValue])
-        .range([padding, svgDimensions.width - padding]);
+        .range([0, svgDimensions.width - padding - 100]);
 
     let yScale = d3.scaleLinear()
         .domain([minYValue, maxYValue])
@@ -45,8 +45,8 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
         let svg = d3.select(svgRef.current)
             .attr("preserveAspectRatio", "xMidYMid meet")
             .attr("viewBox", `0 0 ${svgDimensions.width + padding * 2} ${svgDimensions.height + padding * 2}`)
-            .attr("width", svgDimensions.width + padding * 2)
-            .attr("height", svgDimensions.height+ padding * 2);
+            .attr("width", "100%")
+            .attr("height", "100%");
 
 
         // Define line generator
@@ -54,18 +54,6 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .x(d => xScale(d.x)) // Access the correct property for the x-coordinate
             .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
             .curve(d3.curveBasis); // Apply smoothing to the line
-
-        let sectionGroup = svg.append("g");
-
-        // overlaysRef.current = sectionGroup.selectAll("rect")
-        //     .data(wiggersGraphData.sections)
-        //     .enter()
-        //     .append("rect")
-        //     .attr("x", d => xScale(d.startXCoordinates))
-        //     .attr("y", 0)
-        //     .attr("width", d => xScale(d.endXCoordinates) - xScale(d.startXCoordinates))
-        //     .attr("height", svgDimensions.height)
-        //     .attr("fill", "transparent");
 
         var lineGroup = svg.append("g");
         linesRef.current = lineGroup.selectAll(".gLineSolid")
@@ -148,9 +136,9 @@ lineGroup.selectAll(".gLineDotted1")
             .attr("r", function (d) {
                 return d.circleSize !== undefined ? d.circleSize : 15;
             })
-            .attr("fill", function (d) {
-                return d.color;
-            });
+            .attr("fill", "rgb(54, 69, 79)")
+            .attr("stroke", function(d) { return d.color; })
+            .attr("stroke-width", 5);;
 
         const biggestLastX = wiggersGraphData.lines.map(line => line.coordinates[line.coordinates.length - 1].x).sort((a, b) => b - a)[0];
         wiggersGraphData.lines.forEach(graphData => {
@@ -171,12 +159,14 @@ lineGroup.selectAll(".gLineDotted1")
         });
 
         svg.append('text')
-        .attr('class', 'title')
-        .attr('x', svgDimensions.width / 2 + 20)
-        .attr('y', svgDimensions.height - 10)
-        .attr('text-anchor', 'middle')
-        .style('font-size', '60')
-        .text('Wiggers Diagram');
+            .attr('class', 'title')
+            .attr('x', svgDimensions.width / 2 + 20)
+            .attr('y', svgDimensions.height - 5)
+            .attr('text-anchor', 'middle')
+            .style('font-family', 'Arial, Helvetica, sans-serif')
+            .style('font-size', '50px')
+            .style('font-weight', 'bold')
+            .text('Wiggers Diagram');
 
 
 
