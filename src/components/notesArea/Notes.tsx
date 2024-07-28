@@ -56,10 +56,6 @@ export const VF = () => (
     <p>During ventricular filling, the atrioventricular (AV) valves are open, allowing blood to flow from the atria into the ventricles down a pressure gradient from high pressure to lower pressure. This phase occurs during ventricular diastole, when the heart muscles are relaxed. Note that the majority of ventricular filling occurs passively ie down a pressure gradient.  Depolarization of the atria (P wave) results in atrial contraction which tops up the ventricular volume.</p>
     <table style={tableStyles.table}>
   <tr>
-    <td style={tableStyles.td}>Ventricular state</td>
-    <td style={tableStyles.td}>Relaxed: filling</td>
-  </tr>
-  <tr>
     <td style={tableStyles.td}>State of atrioventricular valves</td>
     <td style={tableStyles.td}>open</td>
   </tr>
@@ -84,10 +80,6 @@ export const IC = () => (
     <p>In the isovolumetric contraction phase, both the AV valves and the semilunar valves are closed so the ventricular contracts on a fixed volume of blood.  This results in a rapid increase in ventricular pressure which is required in order to open the semilunar valve.  In this first phase of systole no blood is entering or leaving the ventricle.</p>
     <table style={tableStyles.table}>
   <tr>
-    <td style={tableStyles.td}>Ventricular state</td>
-    <td style={tableStyles.td}>isovolumetric contraction</td>
-  </tr>
-  <tr>
     <td style={tableStyles.td}>State of atrioventricular valves</td>
     <td style={tableStyles.td}>closed (*1st heart sound)</td>
   </tr>
@@ -109,10 +101,6 @@ export const VE = () => (
     <div id="notesArea">
     <p>During ventricular ejection, the semilunar valves open due to pressure in the ventricles becoming greater than the pressure in the aorta as the result of the isovolumetric contraction.  Blood exists the ventricles to the aorta (left side) and pulmonary artery (right side).  This phase occurs during systole, when the ventricles are actively contracting and the pressure in the ventricle exceeds that of the pressure in the aorta (left side).  Ventricular contraction is triggered by the QRS wave in the ECG - Ventricular depolarization triggers ventricular contraction.</p>
     <table style={tableStyles.table}>
-  <tr>
-    <td style={tableStyles.td}>Ventricular state</td>
-    <td style={tableStyles.td}>contraction: ejection</td>
-  </tr>
   <tr>
     <td style={tableStyles.td}>State of atrioventricular valves</td>
     <td style={tableStyles.td}>closed</td>
@@ -136,10 +124,6 @@ export const IR = () => (
     <div id="notesArea">
     <p>In the isovolumetric relaxation phase, the ventricles relax with both AV and Semilunar valves closed, leading to a rapid drop in ventricular pressure. Once the pressure in the ventricles falls below that in the ventricles the AV valves open and ventricular filling occurs once again.</p>
     <table style={tableStyles.table}>
-  <tr>
-    <td style={tableStyles.td}>Ventricular state</td>
-    <td style={tableStyles.td}>isovolumetric relaxation</td>
-  </tr>
   <tr>
     <td style={tableStyles.td}>State of atrioventricular valves</td>
     <td style={tableStyles.td}>closed</td>
