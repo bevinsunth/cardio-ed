@@ -81,7 +81,7 @@ export const IC = () => (
     <table style={tableStyles.table}>
   <tr>
     <td style={tableStyles.td}>State of atrioventricular valves</td>
-    <td style={tableStyles.td}>closed (*1st heart sound)</td>
+    <td style={tableStyles.td}>closed (1st heart sound)</td>
   </tr>
   <tr>
     <td style={tableStyles.td}>State of aortic and pulmonary valves</td>
@@ -130,7 +130,7 @@ export const IR = () => (
   </tr>
   <tr>
     <td style={tableStyles.td}>State of aortic and pulmonary valves</td>
-    <td style={tableStyles.td}>closed *2nd sound heart</td>
+    <td style={tableStyles.td}>closed (2nd sound heart)</td>
   </tr>
 </table>
     </div>
