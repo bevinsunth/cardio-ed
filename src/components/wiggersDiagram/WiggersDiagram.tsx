@@ -55,18 +55,6 @@ const WiggersDiagram: React.FC<{ pressureVolumeActivePointerData: interfaces.Pre
             .y(d => yScale(d.y)) // Access the correct property for the y-coordinate
             .curve(d3.curveBasis); // Apply smoothing to the line
 
-        let sectionGroup = svg.append("g");
-
-        // overlaysRef.current = sectionGroup.selectAll("rect")
-        //     .data(wiggersGraphData.sections)
-        //     .enter()
-        //     .append("rect")
-        //     .attr("x", d => xScale(d.startXCoordinates))
-        //     .attr("y", 0)
-        //     .attr("width", d => xScale(d.endXCoordinates) - xScale(d.startXCoordinates))
-        //     .attr("height", svgDimensions.height)
-        //     .attr("fill", "transparent");
-
         var lineGroup = svg.append("g");
         linesRef.current = lineGroup.selectAll(".gLineSolid")
             .data(wiggersGraphData.lines)
@@ -148,9 +136,9 @@ lineGroup.selectAll(".gLineDotted1")
             .attr("r", function (d) {
                 return d.circleSize !== undefined ? d.circleSize : 15;
             })
-            .attr("fill", function (d) {
-                return d.color;
-            });
+            .attr("fill", "rgb(54, 69, 79)")
+            .attr("stroke", function(d) { return d.color; })
+            .attr("stroke-width", 5);;
 
         const biggestLastX = wiggersGraphData.lines.map(line => line.coordinates[line.coordinates.length - 1].x).sort((a, b) => b - a)[0];
         wiggersGraphData.lines.forEach(graphData => {

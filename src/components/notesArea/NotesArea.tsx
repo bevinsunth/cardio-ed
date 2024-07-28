@@ -1,4 +1,4 @@
-import React from 'react';
+import  from 'react';
 import { CSSProperties, useEffect, useState } from 'react';
 import notesDataJson from '@/components/shared/data/information.json';
 import {Default, IC, IR, VE, VF} from '@/components/notesArea/Notes';
