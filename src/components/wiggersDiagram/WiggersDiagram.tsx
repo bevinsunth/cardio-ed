@@ -5,9 +5,6 @@ import * as graphDataHelper from '@/utils/graphDataHelper';
 import * as interfaces from '@/components/shared/types';
 import * as styles from '@/components/shared/styles';
 
-
-
-
 const wiggersGraphData: interfaces.WiggersGraphData = wiggersGraphDataJson;
 
 let minXValue = findMinX(wiggersGraphData.lines);
@@ -155,7 +152,7 @@ lineGroup.selectAll(".gLineDotted1")
                 .attr("dx", ".5em") // Offset a bit to the right from the end of the line
                 .style("fill", graphData.color) // Match the line color
                 .text(graphData.label)
-                .attr("font-size", "50px");;
+                .attr("font-size", "50px");
         });
 
         svg.append('text')

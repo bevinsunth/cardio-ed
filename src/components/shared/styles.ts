@@ -1,4 +1,3 @@
-import { toPadding } from 'chart.js/helpers';
 import { CSSProperties } from 'react';
 
 export const svgContainer: CSSProperties = {
@@ -14,7 +13,7 @@ export const svgContainer: CSSProperties = {
     right: "0",
     width: "100%",
     height: "100%",
-    overflow: "hidden", 
+    overflow: "hidden",
 };
 
 export const svgContentResponsive: CSSProperties = {
@@ -26,5 +25,9 @@ export const svgContentResponsive: CSSProperties = {
     right: "0",
     margin: "auto",
     width: "100%",
-    height: "100%"
+    height: "100%",
+    userSelect: "none", /* Standard syntax */
+    WebkitUserSelect: "none", /* Safari */
+    MozUserSelect: "none", /* Firefox */
+    msUserSelect: "none", /* Internet Explorer/Edge */
 };
